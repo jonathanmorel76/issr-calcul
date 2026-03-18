@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calcul ISSR — Enseignant 1er degré</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --chalk-bg: #2a3b2a;
+    --chalk-bg-light: #344534;
+    --chalk-white: #e8e4d4;
+    --chalk-yellow: #f5e6a3;
+    --crayon-blue: #3b7dd8;
+    --crayon-blue-light: #5a9be6;
+    --crayon-blue-glow: rgba(59, 125, 216, 0.15);
+    --crayon-red: #d94f4f;
+    --crayon-red-bg: rgba(217, 79, 79, 0.08);
+    --crayon-green: #4caf50;
+    --crayon-green-bg: rgba(76, 175, 80, 0.08);
+    --crayon-orange: #e8943a;
+    --crayon-purple: #8e5cb8;
+    --rep-orange: #e07020;
+    --rep-plus: #c0392b;
+    --paper: #fdf8ee;
+    --paper-line: #c8d8ec;
+    --paper-margin: #e8a0a0;
+    --paper-dark: #f3ecdb;
+    --paper-border: #d5cbb5;
+    --ink: #2c2416;
+    --ink-muted: #7a6f5f;
+    --white: #ffffff;
+    --radius: 10px;
+    --shadow: 0 2px 8px rgba(44,36,22,0.08), 0 1px 3px rgba(44,36,22,0.06);
+    --shadow-lg: 0 6px 24px rgba(44,36,22,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, var(--paper-line) 31px, var(--paper-line) 32px),
+      repeating-linear-gradient(90deg, transparent, transparent 31px, rgba(200,216,236,0.25) 31px, rgba(200,216,236,0.25) 32px);
+    background-size: 32px 32px;
+  }
+
+  /* HEADER — Tableau noir */
+  .header {
+    background: var(--chalk-bg);
+    padding: 2rem 2rem 2.8rem;
+    position: relative;
+    overflow: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.02) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 80%, rgba(255,255,255,0.02) 0%, transparent 60%);
+    border-bottom: 8px solid #5c3a1e;
+    box-shadow: 0 4px 0 #3d2510, 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 10%; right: 10%;
+    height: 8px;
+    background: linear-gradient(to bottom, #6b4423, #8b5e3c);
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .header-content { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .header h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--chalk-white);
+    margin-bottom: 0.2rem;
+    text-shadow: 0 0 4px rgba(232,228,212,0.3);
+  }
+  .header p {
+    font-family: 'Patrick Hand', cursive;
+    color: rgba(232,228,212,0.55);
+    font-size: 1rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(245,230,163,0.12);
+    color: var(--chalk-yellow);
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    margin-bottom: 0.8rem;
+    border: 1px dashed rgba(245,230,163,0.3);
+  }
+  .doodle {
+    position: absolute;
+    font-size: 1.8rem;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .doodle-1 { top: 15px; right: 40px; transform: rotate(12deg); }
+  .doodle-2 { top: 55px; right: 120px; transform: rotate(-8deg); font-size: 1.4rem; }
+  .doodle-3 { bottom: 20px; right: 60px; transform: rotate(5deg); }
+  .doodle-4 { top: 10px; right: 220px; transform: rotate(-15deg); font-size: 1.5rem; }
+  .doodle-5 { bottom: 25px; left: 60px; transform: rotate(8deg); font-size: 1.3rem; }
+
+  /* MAIN */
+  .main { max-width: 1100px; margin: -1rem auto 2rem; padding: 0 1.5rem; position: relative; z-index: 2; }
+
+  /* CARDS — Feuille de cahier */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+    border: 1px solid var(--paper-border);
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 14px;
+    width: 1.5px;
+    background: var(--paper-margin);
+    opacity: 0.4;
+    border-radius: 1px;
+    z-index: 0;
+  }
+
+  /* INFO SECTION */
+  .api-section { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; position: relative; z-index: 1; }
+  .api-section label { font-weight: 700; font-size: 0.85rem; white-space: nowrap; }
+  .api-hint { font-size: 0.75rem; color: var(--ink-muted); width: 100%; }
+  .api-hint a { color: var(--crayon-blue); text-decoration: none; font-weight: 600; }
+
+  /* ADD FORM */
+  .add-section { padding: 1.5rem; position: relative; z-index: 1; }
+  .add-section h2 {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--chalk-bg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .form-grid { display: grid; grid-template-columns: 110px 1fr 1fr 80px auto auto auto; gap: 0.8rem; align-items: end; }
+  .form-group label {
+    display: block; font-size: 0.72rem; font-weight: 700;
+    color: var(--ink-muted); margin-bottom: 0.3rem;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .form-group input[type="date"],
+  .form-group input[type="text"] {
+    width: 100%; padding: 0.6rem 0.8rem;
+    border: 1.5px solid var(--paper-border); border-radius: 8px;
+    font-family: 'Nunito', sans-serif; font-size: 0.88rem;
+    transition: all 0.2s; background: var(--paper);
+  }
+  .form-group input:focus {
+    outline: none; border-color: var(--crayon-blue);
+    box-shadow: 0 0 0 3px var(--crayon-blue-glow); background: var(--white);
+  }
+  .checkbox-group { display: flex; flex-direction: column; align-items: center; }
+  .checkbox-group label { font-size: 0.7rem; font-weight: 800; margin-bottom: 0.35rem; }
+  .checkbox-rep, .checkbox-repplus { width: 22px; height: 22px; cursor: pointer; accent-color: var(--rep-orange); }
+  .checkbox-repplus { accent-color: var(--rep-plus); }
+
+  /* AUTOCOMPLETE */
+  .ac-wrapper { position: relative; }
+  .ac-dropdown {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 100;
+    background: var(--white); border: 1.5px solid var(--crayon-blue);
+    border-top: none; border-radius: 0 0 8px 8px;
+    box-shadow: var(--shadow-lg); max-height: 220px; overflow-y: auto; display: none;
+  }
+  .ac-dropdown.open { display: block; }
+  .ac-item {
+    padding: 0.55rem 0.8rem; font-size: 0.82rem; cursor: pointer;
+    border-bottom: 1px solid var(--paper-border); transition: background 0.1s;
+    display: flex; align-items: flex-start; gap: 0.5rem;
+  }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.ac-active { background: var(--crayon-blue-glow); }
+  .ac-icon { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; color: var(--crayon-blue); opacity: 0.6; }
+  .ac-label { flex: 1; line-height: 1.35; }
+  .ac-label-main { font-weight: 600; color: var(--ink); }
+  .ac-label-sub { font-size: 0.72rem; color: var(--ink-muted); margin-top: 1px; }
+  .ac-loading { padding: 0.6rem 0.8rem; font-size: 0.8rem; color: var(--ink-muted); text-align: center; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 0.6rem 1.2rem; border: none; border-radius: 8px;
+    font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem;
+    cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn-primary { background: var(--crayon-blue); color: var(--white); box-shadow: 0 2px 0 #2a5fa8; }
+  .btn-primary:hover { background: var(--crayon-blue-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,125,216,0.3); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-export { background: var(--crayon-green); color: var(--white); box-shadow: 0 2px 0 #388e3c; }
+  .btn-export:hover { background: #5cb860; transform: translateY(-1px); }
+  .btn-danger { background: transparent; color: var(--crayon-red); padding: 0.4rem; border-radius: 6px; }
+  .btn-danger:hover { background: var(--crayon-red-bg); }
+
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: var(--white); border-radius: 50%; animation: spin 0.6s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* TABLE */
+  .table-section { overflow: hidden; position: relative; z-index: 1; }
+  .table-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid var(--paper-border); }
+  .table-header h2 { font-family: 'Caveat', cursive; font-size: 1.3rem; font-weight: 700; color: var(--chalk-bg); }
+  .table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  thead th {
+    background: var(--chalk-bg); color: var(--chalk-white);
+    font-family: 'Patrick Hand', cursive; font-size: 0.85rem;
+    padding: 0.75rem 0.8rem; text-align: left; white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid var(--paper-border); transition: background 0.15s; }
+  tbody tr:nth-child(even) { background: rgba(253, 248, 238, 0.5); }
+  tbody tr:hover { background: rgba(59, 125, 216, 0.04); }
+  tbody td { padding: 0.65rem 0.8rem; vertical-align: middle; }
+  .td-center { text-align: center; }
+  .td-km { font-weight: 800; color: var(--crayon-blue); text-align: center; font-size: 0.95rem; }
+  .td-amount { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  .td-total { font-weight: 800; color: var(--chalk-bg); text-align: right; font-variant-numeric: tabular-nums; }
+  .tag-rep { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; }
+  .tag-rep-yes { background: rgba(224,112,32,0.12); color: var(--rep-orange); }
+  .tag-repplus-yes { background: rgba(192,57,43,0.1); color: var(--rep-plus); }
+
+  /* TOTALS — Tableau noir */
+  .totals-bar {
+    background: var(--chalk-bg); padding: 1.2rem 1.5rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem;
+    border-top: 3px solid #5c3a1e;
+  }
+  .total-item { text-align: center; }
+  .total-label { font-family: 'Patrick Hand', cursive; font-size: 0.8rem; color: rgba(232,228,212,0.5); margin-bottom: 0.15rem; }
+  .total-value { font-family: 'Caveat', cursive; font-size: 1.5rem; font-weight: 700; color: var(--chalk-yellow); text-shadow: 0 0 6px rgba(245,230,163,0.2); }
+
+  /* GRILLE REFERENCE */
+  .ref-section { padding: 1.5rem; position: relative; z-index: 1; }
+  .ref-section h3 { font-family: 'Caveat', cursive; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--chalk-bg); }
+  .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .ref-table table { width: 100%; font-size: 0.8rem; border-collapse: collapse; }
+  .ref-table th { background: var(--paper-dark); color: var(--ink); font-size: 0.72rem; padding: 0.5rem 0.7rem; text-transform: uppercase; text-align: left; font-weight: 700; }
+  .ref-table td { padding: 0.4rem 0.7rem; border-bottom: 1px solid var(--paper-border); }
+  .ref-table tr:nth-child(even) td { background: rgba(253,248,238,0.5); }
+  .ref-primes .prime-item { padding: 0.7rem 0.9rem; border-radius: 8px; margin-bottom: 0.5rem; }
+  .prime-rep { background: rgba(224,112,32,0.07); border-left: 3px solid var(--rep-orange); }
+  .prime-repplus { background: rgba(192,57,43,0.06); border-left: 3px solid var(--rep-plus); }
+  .prime-label { font-weight: 800; font-size: 0.85rem; }
+  .prime-detail { font-size: 0.75rem; color: var(--ink-muted); margin-top: 0.15rem; }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--ink-muted); }
+  .empty-state svg { width: 48px; height: 48px; margin-bottom: 0.8rem; opacity: 0.25; }
+  .empty-state p { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; }
+
+  .status-msg { font-size: 0.8rem; padding: 0.5rem 0.8rem; border-radius: 6px; margin-top: 0.8rem; display: none; font-weight: 600; }
+  .status-msg.error { display: block; background: var(--crayon-red-bg); color: var(--crayon-red); border: 1px solid rgba(217,79,79,0.15); }
+  .status-msg.success { display: block; background: var(--crayon-green-bg); color: var(--crayon-green); border: 1px solid rgba(76,175,80,0.15); }
+
+  .footer { text-align: center; padding: 1.5rem; color: var(--ink-muted); font-family: 'Patrick Hand', cursive; font-size: 0.9rem; }
+  .footer a { color: var(--crayon-blue); text-decoration: none; }
+
+  @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr 1fr; } .ref-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .header h1 { font-size: 1.6rem; } body { background-size: 24px 24px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-content">
+    <div class="badge">🍎 Enseignant 1er degré</div>
+    <h1>Calcul des ISSR</h1>
+    <p>Indemnités de Sujétions Spéciales de Remplacement — Itinéraire le plus court</p>
+  </div>
+  <div class="doodle doodle-1">📐</div>
+  <div class="doodle doodle-2">✏️</div>
+  <div class="doodle doodle-3">📚</div>
+  <div class="doodle doodle-4">🎒</div>
+  <div class="doodle doodle-5">🏫</div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="api-section">
+      <label>🚗 Moteur de calcul :</label>
+      <span style="font-size:0.85rem;color:var(--crayon-green);font-weight:700;">OSRM — Gratuit, sans clé API</span>
+      <div class="api-hint">
+        Géocodage par <a href="https://adresse.data.gouv.fr/" target="_blank">Base Adresse Nationale (BAN)</a> · Itinéraire le plus court par <a href="https://project-osrm.org/" target="_blank">OSRM</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="add-section">
+      <h2>✏️ Ajouter un déplacement</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="inputDate">Date</label>
+          <input type="date" id="inputDate" />
+        </div>
+        <div class="form-group">
+          <label for="inputOrigine">Adresse d'origine</label>
+          <div class="ac-wrapper">
+            <input type="text" id="inputOrigine" placeholder="Ex : 12 rue des Écoles, 75005 Paris" autocomplete="off" />
+            <div class="ac-dropdown" id="acOrigine"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputDest">Adresse de remplacement</label>
+          <div class="ac-wrapper">
+            <input type="text" id="inputDest" placeholder="Ex : 5 avenue Victor Hugo, 92100 Boulogne" autocomplete="off" />
+            <div class="ac-dropdown" id="acDest"></div>
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <label style="color: var(--crayon-blue);">KM</label>
+          <input type="number" id="inputKm" placeholder="—" min="0" step="0.1" style="width:70px;padding:0.5rem 0.4rem;border:1.5px solid var(--paper-border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:0.9rem;text-align:center;background:var(--paper);font-weight:700;color:var(--crayon-blue);" title="Laissez vide pour calcul auto, ou saisissez le km manuellement" />
+        </div>
+        <div class="checkbox-group">
+          <label style="color: var(--rep-orange);">REP</label>
+          <input type="checkbox" class="checkbox-rep" id="inputRep" />
+        </div>
+        <div class="checkbox-group">
+          <label style="color: var(--rep-plus);">REP+</label>
+          <input type="checkbox" class="checkbox-repplus" id="inputRepPlus" />
+        </div>
+        <div class="form-group" style="align-self: end;">
+          <button class="btn btn-primary" id="btnAdd" onclick="addEntry()">
+            <span class="spinner" id="addSpinner"></span>
+            Calculer & Ajouter
+          </button>
+        </div>
+      </div>
+      <div class="status-msg" id="statusMsg"></div>
+      <div style="margin-top:0.8rem;padding:0.7rem 1rem;background:rgba(59,125,216,0.06);border:1px dashed rgba(59,125,216,0.25);border-radius:8px;font-size:0.78rem;color:var(--ink-muted);line-height:1.5;">
+        <span style="font-weight:700;color:var(--crayon-blue);">💡 Champ KM :</span>
+        Laissez-le <strong>vide</strong> pour un calcul automatique de l'itinéraire le plus court.
+        Ou <strong>saisissez directement le kilométrage</strong> ARIA pour un calcul conforme au référentiel officiel.
+      </div>
+    </div>
+  </div>
+
+  <div class="card table-section">
+    <div class="table-header">
+      <h2>📋 Déplacements</h2>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>N°</th><th>Date</th><th>Origine</th><th>Destination</th><th>Km</th>
+            <th>REP</th><th>REP+</th><th>Indem. km</th><th>Prime REP</th><th>Prime REP+</th><th>Total</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <p>Aucun déplacement enregistré — commencez par ajouter un trajet ci-dessus ☝️</p>
+      </div>
+    </div>
+    <div class="totals-bar" id="totalsBar" style="display:none;">
+      <div class="total-item"><div class="total-label">Jours</div><div class="total-value" id="totalJours">0</div></div>
+      <div class="total-item"><div class="total-label">Indemnités km</div><div class="total-value" id="totalKm">0,00 €</div></div>
+      <div class="total-item"><div class="total-label">Primes REP</div><div class="total-value" id="totalRep">0,00 €</div></div>
+      <div class="total-item"><div class="total-label">Primes REP+</div><div class="total-value" id="totalRepPlus">0,00 €</div></div>
+      <div class="total-item"><div class="total-label">Total général</div><div class="total-value" id="totalGeneral">0,00 €</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ref-section">
+      <h3>📐 Grille de référence ISSR</h3>
+      <div class="ref-grid">
+        <div class="ref-table">
+          <table>
+            <thead><tr><th>Tranche kilométrique</th><th>Montant</th></tr></thead>
+            <tbody>
+              <tr><td>Moins de 10 km</td><td>15,94 €</td></tr>
+              <tr><td>De 10 à 19 km</td><td>21,04 €</td></tr>
+              <tr><td>De 20 à 29 km</td><td>26,16 €</td></tr>
+              <tr><td>De 30 à 39 km</td><td>30,87 €</td></tr>
+              <tr><td>De 40 à 49 km</td><td>36,86 €</td></tr>
+              <tr><td>De 50 à 59 km</td><td>42,89 €</td></tr>
+              <tr><td>De 60 à 80 km</td><td>49,24 €</td></tr>
+              <tr><td>Par tranche suppl. de 20 km</td><td>+7,34 €</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="ref-primes">
+          <div class="prime-item prime-rep">
+            <div class="prime-label">Prime REP</div>
+            <div class="prime-detail">1 734 € / 12 / 30 = 4,82 €/jour</div>
+          </div>
+          <div class="prime-item prime-repplus">
+            <div class="prime-label">Prime REP+</div>
+            <div class="prime-detail">5 114,04 € / 12 / 30 = 14,21 €/jour</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Outil de calcul ISSR · Données cartographiques © <a href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> · Les distances peuvent différer du référentiel ARIA
+  </div>
+</div>
+
+<script>
+const entries = [];
+const GRILLE = [
+  { min: 0, max: 9, montant: 15.94 },
+  { min: 10, max: 19, montant: 21.04 },
+  { min: 20, max: 29, montant: 26.16 },
+  { min: 30, max: 39, montant: 30.87 },
+  { min: 40, max: 49, montant: 36.86 },
+  { min: 50, max: 59, montant: 42.89 },
+  { min: 60, max: 80, montant: 49.24 },
+];
+const SUPPL_20KM = 7.34;
+const PRIME_REP_JOUR = 1734 / 12 / 30;
+const PRIME_REPPLUS_JOUR = 5114.04 / 12 / 30;
+
+function calcIndemKm(km) {
+  if (km < 0) return 0;
+  for (const t of GRILLE) { if (km >= t.min && km <= t.max) return t.montant; }
+  if (km > 80) return 49.24 + Math.ceil((km - 80) / 20) * SUPPL_20KM;
+  return 0;
+}
+function fmt(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
+function fmtDate(d) { if (!d) return ''; const p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg; el.className = 'status-msg ' + type;
+  if (type === 'success') setTimeout(() => { el.className = 'status-msg'; }, 3000);
+}
+
+async function geocode(address) {
+  const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(address)}&limit=1`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('Erreur géocodage: ' + resp.status);
+  const data = await resp.json();
+  if (!data.features || data.features.length === 0) throw new Error(`Adresse introuvable: "${address}"`);
+  const coords = data.features[0].geometry.coordinates;
+  return [coords[0], coords[1]]; // [lng, lat]
+}
+
+async function getDistance(coordsA, coordsB) {
+  const url = `https://router.project-osrm.org/route/v1/driving/${coordsA[0]},${coordsA[1]};${coordsB[0]},${coordsB[1]}?overview=false&alternatives=false`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('Erreur calcul itinéraire: ' + resp.status);
+  const data = await resp.json();
+  if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) throw new Error('Itinéraire introuvable');
+  return Math.round(data.routes[0].distance / 100) / 10;
+}
+
+async function addEntry() {
+  const date = document.getElementById('inputDate').value;
+  const origine = document.getElementById('inputOrigine').value.trim();
+  const dest = document.getElementById('inputDest').value.trim();
+  const manualKm = document.getElementById('inputKm').value.trim();
+  const isRep = document.getElementById('inputRep').checked;
+  const isRepPlus = document.getElementById('inputRepPlus').checked;
+  if (!date) { showStatus('Veuillez indiquer une date.', 'error'); return; }
+  if (!origine || !dest) { showStatus('Veuillez renseigner les deux adresses.', 'error'); return; }
+  const btn = document.getElementById('btnAdd');
+  const spinner = document.getElementById('addSpinner');
+  btn.disabled = true; spinner.style.display = 'inline-block'; showStatus('', '');
+  try {
+    let km;
+    if (manualKm !== '' && !isNaN(parseFloat(manualKm))) {
+      // Km saisi manuellement
+      km = parseFloat(manualKm);
+    } else {
+      // Calcul auto via API
+      const coordsA = (acState['inputOrigine'] && acState['inputOrigine'].coords)
+        ? acState['inputOrigine'].coords : await geocode(origine);
+      const coordsB = (acState['inputDest'] && acState['inputDest'].coords)
+        ? acState['inputDest'].coords : await geocode(dest);
+      km = await getDistance(coordsA, coordsB);
+    }
+    const indemKm = calcIndemKm(km);
+    const primeRep = isRep ? PRIME_REP_JOUR : 0;
+    const primeRepPlus = isRepPlus ? PRIME_REPPLUS_JOUR : 0;
+    const total = indemKm + primeRep + primeRepPlus;
+    entries.push({ date, origine, dest, km, isRep, isRepPlus, indemKm, primeRep, primeRepPlus, total });
+    renderTable();
+    const mode = (manualKm !== '' && !isNaN(parseFloat(manualKm))) ? 'Manuel' : 'Calculé';
+    showStatus(`${mode} : ${km} km — ${fmt(total)}`, 'success');
+    document.getElementById('inputOrigine').value = '';
+    document.getElementById('inputDest').value = '';
+    document.getElementById('inputKm').value = '';
+    document.getElementById('inputRep').checked = false;
+    document.getElementById('inputRepPlus').checked = false;
+  } catch (err) { showStatus(err.message + ' — Vous pouvez saisir le km manuellement.', 'error'); }
+  finally { btn.disabled = false; spinner.style.display = 'none'; }
+}
+
+function removeEntry(idx) { entries.splice(idx, 1); renderTable(); }
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const totalsBar = document.getElementById('totalsBar');
+  if (entries.length === 0) { tbody.innerHTML = ''; empty.style.display = ''; totalsBar.style.display = 'none'; return; }
+  empty.style.display = 'none'; totalsBar.style.display = 'grid';
+  let html = '', sumKm = 0, sumRep = 0, sumRepPlus = 0, sumTotal = 0;
+  entries.forEach((e, i) => {
+    sumKm += e.indemKm; sumRep += e.primeRep; sumRepPlus += e.primeRepPlus; sumTotal += e.total;
+    html += `<tr>
+      <td class="td-center">${i+1}</td><td class="td-center">${fmtDate(e.date)}</td>
+      <td>${e.origine}</td><td>${e.dest}</td><td class="td-km">${e.km}</td>
+      <td class="td-center">${e.isRep ? '<span class="tag-rep tag-rep-yes">REP</span>' : '—'}</td>
+      <td class="td-center">${e.isRepPlus ? '<span class="tag-rep tag-repplus-yes">REP+</span>' : '—'}</td>
+      <td class="td-amount">${fmt(e.indemKm)}</td>
+      <td class="td-amount">${e.primeRep > 0 ? fmt(e.primeRep) : '—'}</td>
+      <td class="td-amount">${e.primeRepPlus > 0 ? fmt(e.primeRepPlus) : '—'}</td>
+      <td class="td-total">${fmt(e.total)}</td>
+      <td class="td-center"><button class="btn btn-danger" onclick="removeEntry(${i})" title="Supprimer">✕</button></td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+  document.getElementById('totalJours').textContent = entries.length;
+  document.getElementById('totalKm').textContent = fmt(sumKm);
+  document.getElementById('totalRep').textContent = fmt(sumRep);
+  document.getElementById('totalRepPlus').textContent = fmt(sumRepPlus);
+  document.getElementById('totalGeneral').textContent = fmt(sumTotal);
+}
+
+function exportCSV() {
+  if (entries.length === 0) return;
+  let csv = 'N°;Date;Origine;Destination;Km;REP;REP+;Indem. km;Prime REP;Prime REP+;Total\n';
+  entries.forEach((e, i) => {
+    csv += `${i+1};${fmtDate(e.date)};${e.origine};${e.dest};${e.km};${e.isRep?'X':''};${e.isRepPlus?'X':''};${e.indemKm.toFixed(2)};${e.primeRep.toFixed(2)};${e.primeRepPlus.toFixed(2)};${e.total.toFixed(2)}\n`;
+  });
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'ISSR_Calcul.csv'; link.click();
+}
+
+document.getElementById('inputDate').valueAsDate = new Date();
+
+// ====== AUTOCOMPLETE ======
+const acState = {};
+function initAutocomplete(inputId, dropdownId) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  const state = { timer: null, activeIdx: -1, results: [], coords: null };
+  acState[inputId] = state;
+  input.addEventListener('input', () => {
+    const q = input.value.trim(); clearTimeout(state.timer); state.coords = null;
+    if (q.length < 3) { closeDropdown(dropdown, state); return; }
+    state.timer = setTimeout(() => fetchSuggestions(q, dropdown, state), 350);
+  });
+  input.addEventListener('keydown', (e) => {
+    if (!dropdown.classList.contains('open')) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); state.activeIdx = Math.min(state.activeIdx + 1, state.results.length - 1); highlightItem(dropdown, state); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); state.activeIdx = Math.max(state.activeIdx - 1, 0); highlightItem(dropdown, state); }
+    else if (e.key === 'Enter' && state.activeIdx >= 0) { e.preventDefault(); selectItem(input, dropdown, state, state.activeIdx); }
+    else if (e.key === 'Escape') { closeDropdown(dropdown, state); }
+  });
+  document.addEventListener('click', (e) => { if (!input.contains(e.target) && !dropdown.contains(e.target)) closeDropdown(dropdown, state); });
+}
+async function fetchSuggestions(query, dropdown, state) {
+  dropdown.innerHTML = '<div class="ac-loading">Recherche…</div>'; dropdown.classList.add('open');
+  try {
+    const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5&autocomplete=1`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    state.results = (data.features || []).map(f => ({
+      label: f.properties.label,
+      context: f.properties.context || '',
+      lon: f.geometry.coordinates[0],
+      lat: f.geometry.coordinates[1]
+    }));
+    state.activeIdx = -1; renderDropdown(dropdown, state);
+  } catch (err) {
+    dropdown.innerHTML = `<div class="ac-loading" style="text-align:left;line-height:1.5;">
+      <div style="font-weight:700;margin-bottom:4px;">⚠️ Autocomplétion indisponible</div>
+      <div style="font-size:0.72rem;">L'autocomplétion n'est pas disponible actuellement.<br>
+      Vous pouvez saisir l'adresse et le km manuellement.</div>
+    </div>`;
+  }
+}
+function renderDropdown(dropdown, state) {
+  if (state.results.length === 0) { dropdown.innerHTML = '<div class="ac-loading">Aucun résultat</div>'; return; }
+  dropdown.innerHTML = state.results.map((r, i) => {
+    return `<div class="ac-item" data-idx="${i}">
+      <svg class="ac-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <div class="ac-label"><div class="ac-label-main">${r.label}</div><div class="ac-label-sub">${r.context}</div></div>
+    </div>`;
+  }).join('');
+  dropdown.querySelectorAll('.ac-item').forEach(item => {
+    item.addEventListener('click', () => { selectItem(dropdown.parentElement.querySelector('input'), dropdown, state, parseInt(item.dataset.idx)); });
+  });
+}
+function selectItem(input, dropdown, state, idx) {
+  const r = state.results[idx]; input.value = r.label;
+  state.coords = [r.lon, r.lat]; closeDropdown(dropdown, state);
+}
+function highlightItem(dropdown, state) { dropdown.querySelectorAll('.ac-item').forEach((el, i) => { el.classList.toggle('ac-active', i === state.activeIdx); }); }
+function closeDropdown(dropdown, state) { dropdown.classList.remove('open'); dropdown.innerHTML = ''; state.activeIdx = -1; }
+initAutocomplete('inputOrigine', 'acOrigine');
+initAutocomplete('inputDest', 'acDest');
+</script>
+</body>
+</html>
