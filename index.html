@@ -272,7 +272,6 @@
   .m-stat-km { color: var(--crayon-blue); }
   .m-stat-total { color: var(--chalk-bg); }
   .m-card-tags { display: flex; gap: 0.3rem; margin-top: 0.4rem; }
-  .m-card-delete { position: absolute; top: 0.6rem; right: 0.6rem; }
 
   /* === TOTALS === */
   .totals-bar {
@@ -633,10 +632,10 @@ function renderTable() {
     if (e.isRep) tags += '<span class="tag-rep tag-rep-yes">REP</span> ';
     if (e.isRepPlus) tags += '<span class="tag-rep tag-repplus-yes">REP+</span>';
     mhtml += `<div class="m-card">
-      <button class="btn btn-danger m-card-delete" onclick="removeEntry(${i})">✕</button>
       <div class="m-card-header">
         <span class="m-card-num">#${i+1}</span>
         <span class="m-card-date">${fmtDate(e.date)}</span>
+        <button class="btn btn-danger" onclick="removeEntry(${i})" style="margin-left:auto;padding:0.2rem 0.5rem;">✕</button>
       </div>
       <div class="m-card-route">
         ${e.origine} <span class="m-card-arrow">→</span> ${e.dest}
