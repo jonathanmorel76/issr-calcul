@@ -316,7 +316,7 @@
   /* === FILTER BAR === */
   .filter-bar {
     display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
-    padding: 0.7rem 1rem; border-bottom: 1px solid var(--paper-border);
+    padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--paper-border);
     background: var(--paper);
   }
   .filter-bar label {
@@ -342,20 +342,24 @@
 
   /* === PAYMENT INFO === */
   .payment-info {
-    display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.7rem 1rem;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.6rem 1.5rem;
     background: linear-gradient(135deg, rgba(76,175,80,0.06) 0%, rgba(59,125,216,0.06) 100%);
     border-top: 1px dashed var(--crayon-green);
     border-radius: 0 0 var(--radius) var(--radius);
-    font-size: 0.78rem; color: var(--ink);
-    line-height: 1.4;
+    font-size: 0.7rem; color: var(--ink-muted);
+    line-height: 1.4; text-align: center;
   }
-  .payment-info-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .payment-info-icon { font-size: 0.9rem; flex-shrink: 0; }
   .payment-info strong { color: var(--crayon-green); }
   .payment-info .payment-amount {
-    font-family: 'Caveat', cursive; font-size: 1.05rem; font-weight: 700;
+    font-family: 'Caveat', cursive; font-size: 0.95rem; font-weight: 700;
     color: var(--chalk-bg);
   }
+
+  .info-box {
+    margin-top: 0.6rem; padding: 0.6rem 0.8rem;
+    background: rgba(59,125,216,0.06); border: 1px dashed rgba(59,125,216,0.25);
     border-radius: 8px; font-size: 0.74rem; color: var(--ink-muted); line-height: 1.45;
   }
   .info-box strong { color: var(--crayon-blue); }
