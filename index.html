@@ -281,7 +281,6 @@
     background: var(--chalk-bg); padding: 0.8rem 1rem;
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem;
     border-top: 3px solid #5c3a1e;
-    border-radius: 0 0 var(--radius) var(--radius);
     align-items: center;
   }
   .total-item { text-align: center; }
@@ -313,6 +312,50 @@
   .info-box {
     margin-top: 0.6rem; padding: 0.6rem 0.8rem;
     background: rgba(59,125,216,0.06); border: 1px dashed rgba(59,125,216,0.25);
+
+  /* === FILTER BAR === */
+  .filter-bar {
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    padding: 0.7rem 1rem; border-bottom: 1px solid var(--paper-border);
+    background: var(--paper);
+  }
+  .filter-bar label {
+    font-size: 0.78rem; font-weight: 700; color: var(--ink-muted); white-space: nowrap;
+  }
+  .filter-bar select {
+    padding: 0.4rem 0.6rem; border: 1.5px solid var(--paper-border); border-radius: 8px;
+    font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 600;
+    background: var(--white); color: var(--ink); cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a6f5f' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 0.5rem center;
+    padding-right: 1.8rem;
+  }
+  .filter-bar select:focus {
+    outline: none; border-color: var(--crayon-blue);
+    box-shadow: 0 0 0 3px var(--crayon-blue-glow);
+  }
+  .filter-count {
+    font-size: 0.75rem; color: var(--ink-muted); font-weight: 500;
+    margin-left: auto;
+  }
+
+  /* === PAYMENT INFO === */
+  .payment-info {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    background: linear-gradient(135deg, rgba(76,175,80,0.06) 0%, rgba(59,125,216,0.06) 100%);
+    border-top: 1px dashed var(--crayon-green);
+    border-radius: 0 0 var(--radius) var(--radius);
+    font-size: 0.78rem; color: var(--ink);
+    line-height: 1.4;
+  }
+  .payment-info-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .payment-info strong { color: var(--crayon-green); }
+  .payment-info .payment-amount {
+    font-family: 'Caveat', cursive; font-size: 1.05rem; font-weight: 700;
+    color: var(--chalk-bg);
+  }
     border-radius: 8px; font-size: 0.74rem; color: var(--ink-muted); line-height: 1.45;
   }
   .info-box strong { color: var(--crayon-blue); }
@@ -466,6 +509,15 @@
       </div>
     </div>
 
+    <!-- Month filter -->
+    <div class="filter-bar">
+      <label for="filterMonth">📅 Mois :</label>
+      <select id="filterMonth" onchange="renderTable()">
+        <option value="all">Tous les mois</option>
+      </select>
+      <span class="filter-count" id="filterCount"></span>
+    </div>
+
     <!-- Desktop table -->
     <div class="desktop-table">
       <div class="table-wrapper">
@@ -495,6 +547,12 @@
       <div class="total-item"><div class="total-label">Primes REP</div><div class="total-value" id="totalRep">0,00 €</div></div>
       <div class="total-item"><div class="total-label">Primes REP+</div><div class="total-value" id="totalRepPlus">0,00 €</div></div>
       <div class="total-item"><div class="total-label">Total général</div><div class="total-value" id="totalGeneral">0,00 €</div></div>
+    </div>
+
+    <!-- Payment info -->
+    <div class="payment-info" id="paymentInfo" style="display:none;">
+      <span class="payment-info-icon">💰</span>
+      <span id="paymentText"></span>
     </div>
   </div>
 
@@ -550,6 +608,35 @@ function calcIndemKm(km) {
 }
 function fmt(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
 function fmtDate(d) { if (!d) return ''; const p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+
+const MOIS_NOMS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+function getMonthKey(dateStr) { return dateStr.substring(0, 7); } // "2026-03"
+function getMonthLabel(key) {
+  const [y, m] = key.split('-');
+  return MOIS_NOMS[parseInt(m) - 1] + ' ' + y;
+}
+function getPaymentMonth(key) {
+  const [y, m] = key.split('-').map(Number);
+  let pm = m + 2, py = y;
+  if (pm > 12) { pm -= 12; py++; }
+  return MOIS_NOMS[pm - 1] + ' ' + py;
+}
+
+function updateFilterOptions() {
+  const select = document.getElementById('filterMonth');
+  const current = select.value;
+  const months = [...new Set(entries.map(e => getMonthKey(e.date)))].sort();
+  select.innerHTML = '<option value="all">Tous les mois</option>';
+  months.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = getMonthLabel(m);
+    select.appendChild(opt);
+  });
+  // Restore selection if still valid
+  if (months.includes(current) || current === 'all') select.value = current;
+  else select.value = 'all';
+}
 function showStatus(msg, type) {
   const el = document.getElementById('statusMsg');
   el.textContent = msg; el.className = 'status-msg ' + type;
@@ -616,18 +703,42 @@ async function addEntry() {
 function removeEntry(idx) { entries.splice(idx, 1); renderTable(); }
 
 function renderTable() {
+  updateFilterOptions();
+  const filter = document.getElementById('filterMonth').value;
   const tbody = document.getElementById('tableBody');
   const mobileCards = document.getElementById('mobileCards');
   const empty = document.getElementById('emptyState');
   const totalsBar = document.getElementById('totalsBar');
-  if (entries.length === 0) { tbody.innerHTML = ''; mobileCards.innerHTML = ''; empty.style.display = ''; totalsBar.style.display = 'none'; return; }
+  const paymentInfo = document.getElementById('paymentInfo');
+  const filterCount = document.getElementById('filterCount');
+
+  // Filter entries
+  const filtered = filter === 'all' ? entries : entries.filter(e => getMonthKey(e.date) === filter);
+
+  if (entries.length === 0) {
+    tbody.innerHTML = ''; mobileCards.innerHTML = ''; empty.style.display = '';
+    totalsBar.style.display = 'none'; paymentInfo.style.display = 'none';
+    filterCount.textContent = '';
+    return;
+  }
+  if (filtered.length === 0) {
+    tbody.innerHTML = ''; mobileCards.innerHTML = '';
+    empty.style.display = ''; empty.querySelector('p').textContent = 'Aucun déplacement pour ce mois';
+    totalsBar.style.display = 'none'; paymentInfo.style.display = 'none';
+    filterCount.textContent = `${entries.length} déplacement(s) au total`;
+    return;
+  }
+
   empty.style.display = 'none'; totalsBar.style.display = 'grid';
+  filterCount.textContent = filter !== 'all' ? `${filtered.length} / ${entries.length} déplacement(s)` : `${entries.length} déplacement(s)`;
+
   let html = '', mhtml = '', sumKm = 0, sumRep = 0, sumRepPlus = 0, sumTotal = 0;
-  entries.forEach((e, i) => {
+  filtered.forEach((e, idx) => {
+    const i = entries.indexOf(e); // real index for delete
     sumKm += e.indemKm; sumRep += e.primeRep; sumRepPlus += e.primeRepPlus; sumTotal += e.total;
     // Desktop row
     html += `<tr>
-      <td class="td-center">${i+1}</td><td class="td-center">${fmtDate(e.date)}</td>
+      <td class="td-center">${idx+1}</td><td class="td-center">${fmtDate(e.date)}</td>
       <td>${e.origine}</td><td>${e.dest}</td><td class="td-km">${e.km}</td>
       <td class="td-center">${e.isRep ? '<span class="tag-rep tag-rep-yes">REP</span>' : '—'}</td>
       <td class="td-center">${e.isRepPlus ? '<span class="tag-rep tag-repplus-yes">REP+</span>' : '—'}</td>
@@ -643,7 +754,7 @@ function renderTable() {
     if (e.isRepPlus) tags += '<span class="tag-rep tag-repplus-yes">REP+</span>';
     mhtml += `<div class="m-card">
       <div class="m-card-header">
-        <span class="m-card-num">#${i+1}</span>
+        <span class="m-card-num">#${idx+1}</span>
         <span class="m-card-date">${fmtDate(e.date)}</span>
         <button class="btn btn-danger" onclick="removeEntry(${i})" style="margin-left:auto;padding:0.2rem 0.5rem;">✕</button>
       </div>
@@ -660,16 +771,37 @@ function renderTable() {
   });
   tbody.innerHTML = html;
   mobileCards.innerHTML = mhtml;
-  document.getElementById('totalJours').textContent = entries.length;
+  document.getElementById('totalJours').textContent = filtered.length;
   document.getElementById('totalKm').textContent = fmt(sumKm);
   document.getElementById('totalRep').textContent = fmt(sumRep);
   document.getElementById('totalRepPlus').textContent = fmt(sumRepPlus);
   document.getElementById('totalGeneral').textContent = fmt(sumTotal);
+
+  // Payment info
+  if (filter !== 'all') {
+    const moisLabel = getMonthLabel(filter);
+    const versementMois = getPaymentMonth(filter);
+    paymentInfo.style.display = 'flex';
+    document.getElementById('paymentText').innerHTML =
+      `Déplacements de <strong>${moisLabel}</strong> — Versement prévu en <strong>${versementMois}</strong> : <span class="payment-amount">${fmt(sumTotal)}</span>`;
+  } else if (entries.length > 0) {
+    // Show general info
+    paymentInfo.style.display = 'flex';
+    document.getElementById('paymentText').innerHTML =
+      `Les ISSR sont versées <strong>2 mois après</strong> le mois des déplacements. Sélectionnez un mois pour voir la date de versement estimée.`;
+  } else {
+    paymentInfo.style.display = 'none';
+  }
 }
 
 // ====== EXPORTS ======
+function getFilteredEntries() {
+  const filter = document.getElementById('filterMonth').value;
+  return filter === 'all' ? entries : entries.filter(e => getMonthKey(e.date) === filter);
+}
+
 function getExportData() {
-  return entries.map((e, i) => ({
+  return getFilteredEntries().map((e, i) => ({
     'N°': i + 1,
     'Date': fmtDate(e.date),
     'Origine': e.origine,
@@ -685,19 +817,20 @@ function getExportData() {
 }
 
 function exportCSV() {
-  if (!entries.length) return;
+  const list = getFilteredEntries();
+  if (!list.length) return;
   let csv = 'N°;Date;Origine;Destination;Km;REP;REP+;Indem. km;Prime REP;Prime REP+;Total\n';
-  entries.forEach((e, i) => {
+  list.forEach((e, i) => {
     csv += `${i+1};${fmtDate(e.date)};${e.origine};${e.dest};${e.km};${e.isRep?'X':''};${e.isRepPlus?'X':''};${e.indemKm.toFixed(2)};${e.primeRep.toFixed(2)};${e.primeRepPlus.toFixed(2)};${e.total.toFixed(2)}\n`;
   });
   downloadBlob(new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'}), 'ISSR_Calcul.csv');
 }
 
 function exportXLSX() {
-  if (!entries.length) return;
+  const list = getFilteredEntries();
+  if (!list.length) return;
   const data = getExportData();
-  // Add totals row
-  const totals = entries.reduce((s, e) => {
+  const totals = list.reduce((s, e) => {
     s['Indem. km'] += e.indemKm; s['Prime REP'] += e.primeRep; s['Prime REP+'] += e.primeRepPlus; s['Total'] += e.total; return s;
   }, {'N°':'','Date':'','Origine':'TOTAL','Destination':'','Km':'','REP':'','REP+':'','Indem. km':0,'Prime REP':0,'Prime REP+':0,'Total':0});
   data.push(totals);
@@ -719,7 +852,9 @@ function exportXLSX() {
 }
 
 function exportPDF() {
-  if (!entries.length) return;
+  const list = getFilteredEntries();
+  if (!list.length) return;
+  const filter = document.getElementById('filterMonth').value;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
@@ -730,19 +865,21 @@ function exportPDF() {
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(120);
-  doc.text('Indemnités de Sujétions Spéciales de Remplacement', 14, 21);
+  const subtitle = filter !== 'all'
+    ? `Indemnités de Sujétions Spéciales de Remplacement — ${getMonthLabel(filter)} — Versement prévu : ${getPaymentMonth(filter)}`
+    : 'Indemnités de Sujétions Spéciales de Remplacement';
+  doc.text(subtitle, 14, 21);
   doc.setTextColor(0);
 
   // Table
   const head = [['N°','Date','Origine','Destination','Km','REP','REP+','Indem. km','Prime REP','Prime REP+','Total']];
-  const body = entries.map((e, i) => [
+  const body = list.map((e, i) => [
     i+1, fmtDate(e.date), e.origine, e.dest, e.km,
     e.isRep?'X':'', e.isRepPlus?'X':'',
     e.indemKm.toFixed(2)+' €', e.primeRep > 0 ? e.primeRep.toFixed(2)+' €' : '—',
     e.primeRepPlus > 0 ? e.primeRepPlus.toFixed(2)+' €' : '—', e.total.toFixed(2)+' €'
   ]);
-  // Totals
-  const sums = entries.reduce((s,e) => { s[0]+=e.indemKm; s[1]+=e.primeRep; s[2]+=e.primeRepPlus; s[3]+=e.total; return s; }, [0,0,0,0]);
+  const sums = list.reduce((s,e) => { s[0]+=e.indemKm; s[1]+=e.primeRep; s[2]+=e.primeRepPlus; s[3]+=e.total; return s; }, [0,0,0,0]);
   body.push(['','','TOTAL','','','','', sums[0].toFixed(2)+' €', sums[1].toFixed(2)+' €', sums[2].toFixed(2)+' €', sums[3].toFixed(2)+' €']);
 
   doc.autoTable({
@@ -768,7 +905,7 @@ function exportPDF() {
   // Footer
   const pageH = doc.internal.pageSize.getHeight();
   doc.setFontSize(7); doc.setTextColor(150);
-  doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} — ${entries.length} jour(s) de remplacement`, 14, pageH - 8);
+  doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} — ${list.length} jour(s) de remplacement`, 14, pageH - 8);
 
   doc.save('ISSR_Calcul.pdf');
 }
