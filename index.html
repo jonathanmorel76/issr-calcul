@@ -278,10 +278,11 @@
 
   /* === TOTALS === */
   .totals-bar {
-    background: var(--chalk-bg); padding: 1rem;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.6rem;
+    background: var(--chalk-bg); padding: 0.8rem 1rem;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem;
     border-top: 3px solid #5c3a1e;
     border-radius: 0 0 var(--radius) var(--radius);
+    align-items: center;
   }
   .total-item { text-align: center; }
   .total-label { font-family: 'Patrick Hand', cursive; font-size: 0.75rem; color: rgba(232,228,212,0.5); margin-bottom: 0.1rem; }
@@ -351,7 +352,7 @@
     .desktop-table { display: none; }
     .mobile-cards { display: block; }
 
-    .totals-bar { grid-template-columns: 1fr 1fr; padding: 0.8rem; gap: 0.5rem; }
+    .totals-bar { grid-template-columns: repeat(3, 1fr); padding: 0.7rem; gap: 0.4rem; }
     .total-value { font-size: 1.1rem; }
 
     .ref-grid { grid-template-columns: 1fr; }
@@ -493,7 +494,7 @@
       <div class="total-item"><div class="total-label">Indem. km</div><div class="total-value" id="totalKm">0,00 €</div></div>
       <div class="total-item"><div class="total-label">Primes REP</div><div class="total-value" id="totalRep">0,00 €</div></div>
       <div class="total-item"><div class="total-label">Primes REP+</div><div class="total-value" id="totalRepPlus">0,00 €</div></div>
-      <div class="total-item" style="grid-column: 1 / -1;"><div class="total-label">Total général</div><div class="total-value" id="totalGeneral" style="font-size:1.6rem;">0,00 €</div></div>
+      <div class="total-item"><div class="total-label">Total général</div><div class="total-value" id="totalGeneral">0,00 €</div></div>
     </div>
   </div>
 
