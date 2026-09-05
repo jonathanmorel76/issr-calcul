@@ -1,20 +1,40 @@
-export const GRILLE = [
-  { min: 0, max: 9, montant: 15.94 },
-  { min: 10, max: 19, montant: 21.04 },
-  { min: 20, max: 29, montant: 26.16 },
-  { min: 30, max: 39, montant: 30.87 },
-  { min: 40, max: 49, montant: 36.86 },
-  { min: 50, max: 59, montant: 42.89 },
-  { min: 60, max: 80, montant: 49.24 },
-]
-export const SUPPL_20KM = 7.34
+export type IssrBracket = { min: number; max: number; amount: number }
+
+export type IssrRateSchedule = {
+  id: string
+  code: string
+  title: string
+  valid_from: string
+  valid_to: string | null
+  brackets: IssrBracket[]
+  extra_20km: number | string
+  source_name: string
+  source_url: string
+  source_nor: string | null
+  source_jorf: string | null
+  source_text_id: string | null
+  published_at: string | null
+  verified_at: string
+  is_official: boolean
+}
+
 export const PRIME_REP_JOUR = 1734 / 12 / 30
 export const PRIME_REPPLUS_JOUR = 5114.04 / 12 / 30
 
-export function calcIndemKm(km: number) {
+export function scheduleForDate(schedules: IssrRateSchedule[], date: string) {
+  return [...schedules]
+    .filter(s => date >= s.valid_from && (!s.valid_to || date <= s.valid_to))
+    .sort((a,b) => b.valid_from.localeCompare(a.valid_from))[0] ?? null
+}
+
+export function calcIndemKm(km: number, schedule: IssrRateSchedule) {
   if (!Number.isFinite(km) || km < 0) return 0
-  for (const t of GRILLE) if (km >= t.min && km <= t.max) return t.montant
-  if (km > 80) return 49.24 + Math.ceil((km - 80) / 20) * SUPPL_20KM
+  const brackets = schedule.brackets ?? []
+  for (const t of brackets) if (km >= Number(t.min) && km <= Number(t.max)) return Number(t.amount)
+  const last = brackets[brackets.length - 1]
+  if (last && km > Number(last.max)) {
+    return Number(last.amount) + Math.ceil((km - Number(last.max)) / 20) * Number(schedule.extra_20km)
+  }
   return 0
 }
 
