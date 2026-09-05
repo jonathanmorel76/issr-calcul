@@ -47,12 +47,12 @@ export default function AppShell({userId,initialEntries,initialMissions,initialE
    setMissions(v=>[...v,mission])
    let generated:EntrySummary[]=[]
    if(generateDays&&selectedEst){
-    const rows=weekdaysBetween(start,end).map(date=>{
-      const schedule=scheduleForDate(rateSchedules,date);if(!schedule)return null
+    const rows=weekdaysBetween(start,end).flatMap(date=>{
+      const schedule=scheduleForDate(rateSchedules,date);if(!schedule)return []
       const distance=Number(selectedEst.usual_distance_km)
       const mileage=calcIndemKm(distance,schedule),repBonus=selectedEst.is_rep?PRIME_REP_JOUR:0,repPlusBonus=selectedEst.is_rep_plus?PRIME_REPPLUS_JOUR:0
-      return {user_id:userId,mission_id:mission.id,generated_by_mission:true,travel_date:date,origin:defaultOrigin.trim(),destination:selectedEst.address,distance_km:distance,distance_source:'manual',is_rep:selectedEst.is_rep,is_rep_plus:selectedEst.is_rep_plus,mileage_allowance:mileage,rep_bonus:repBonus,rep_plus_bonus:repPlusBonus,total_amount:mileage+repBonus+repPlusBonus,rate_schedule_id:schedule.id,rate_code:schedule.code,rate_source_url:schedule.source_url}
-    }).filter(Boolean)
+      return [{user_id:userId,mission_id:mission.id,generated_by_mission:true,travel_date:date,origin:defaultOrigin.trim(),destination:selectedEst.address,distance_km:distance,distance_source:'manual',is_rep:selectedEst.is_rep,is_rep_plus:selectedEst.is_rep_plus,mileage_allowance:mileage,rep_bonus:repBonus,rep_plus_bonus:repPlusBonus,total_amount:mileage+repBonus+repPlusBonus,rate_schedule_id:schedule.id,rate_code:schedule.code,rate_source_url:schedule.source_url}]
+    })
     if(rows.length){const {data:created,error:entryError}=await supabase.from('issr_entries').insert(rows).select('travel_date,distance_km,total_amount,rep_bonus,rep_plus_bonus');if(entryError)throw entryError;generated=(created??[]) as EntrySummary[];setEntries(v=>[...generated,...v])}
    }
    setTitle('');setStart('');setEnd('');setEstId('');setMessage(generateDays?`Mission créée · ${generated.length} journée(s) ISSR générée(s).`:'Mission créée.')
