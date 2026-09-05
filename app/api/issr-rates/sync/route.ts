@@ -123,11 +123,7 @@ async function pistePost(token: string, path: string, body: unknown) {
   return r.json()
 }
 
-async function finishRun(
-  supabase: SupabaseClient,
-  runId: string,
-  values: Record<string, unknown>,
-) {
+async function finishRun(supabase: SupabaseClient, runId: string, values: Record<string, unknown>) {
   await supabase.from('issr_sync_runs').update({ finished_at: new Date().toISOString(), ...values }).eq('id', runId)
 }
 
@@ -167,8 +163,17 @@ export async function GET(req: NextRequest) {
     const textIds = new Set<string>()
 
     for (const id of contIds.slice(0, JO_LOOKBACK)) {
-      const cont = await pistePost(accessToken, '/consult/jorfCont', { highlightActivated: false, id, pageNumber: 1, pageSize: 200 })
-      collectIds(cont, textIds)
+      for (let pageNumber = 1; pageNumber <= 5; pageNumber++) {
+        const before = textIds.size
+        const cont = await pistePost(accessToken, '/consult/jorfCont', {
+          highlightActivated: false,
+          id,
+          pageNumber,
+          pageSize: 100,
+        })
+        collectIds(cont, textIds)
+        if (textIds.size === before) break
+      }
     }
 
     const orderedTextIds = [...textIds].filter((id) => id.startsWith('JORFTEXT')).sort().reverse()
@@ -186,7 +191,7 @@ export async function GET(req: NextRequest) {
 
     for (const textId of toCheck) {
       try {
-        const doc = await pistePost(accessToken, '/consult/jorf', { highlightActivated: false, id: textId, pageNumber: 1, pageSize: 100 })
+        const doc = await pistePost(accessToken, '/consult/jorf', { textCid: textId })
         const parsed = parseRate(textId, doc)
         if (parsed) candidates.push(parsed)
         checkedTexts++
@@ -214,35 +219,44 @@ export async function GET(req: NextRequest) {
       else upserted++
     }
 
+    const fatalDocumentFailure = toCheck.length > 0 && checkedTexts === 0 && documentErrors === toCheck.length
+    const hasErrors = upsertErrors.length > 0 || fatalDocumentFailure
+    const remainingUnseen = Math.max(0, orderedTextIds.length - (seen.size + checkedTexts))
     const details = {
       parser_version: PARSER_VERSION,
       available_texts: orderedTextIds.length,
-      remaining_unseen: Math.max(0, orderedTextIds.length - (seen.size + checkedTexts)),
+      requested_texts: toCheck.length,
+      remaining_unseen: remainingUnseen,
       document_errors: documentErrors,
       upsert_errors: upsertErrors,
       candidates: candidates.map((c) => ({ code: c.code, title: c.title, source_text_id: c.source_text_id, valid_from: c.valid_from, valid_to: c.valid_to })),
     }
 
     await finishRun(supabase, run.id, {
-      status: upsertErrors.length ? 'error' : 'success',
+      status: hasErrors ? 'error' : 'success',
       checked_jo: contIds.length,
       checked_texts: checkedTexts,
       candidates: candidates.length,
       upserted,
-      error_message: upsertErrors.length ? upsertErrors.join(' | ').slice(0, 2000) : null,
+      error_message: fatalDocumentFailure
+        ? `Les ${documentErrors} consultations JORF ont échoué.`
+        : upsertErrors.length
+          ? upsertErrors.join(' | ').slice(0, 2000)
+          : null,
       details,
     })
 
     return NextResponse.json({
-      ok: upsertErrors.length === 0,
+      ok: !hasErrors,
       configured: true,
       checked_jo: contIds.length,
       checked_texts: checkedTexts,
+      document_errors: documentErrors,
       candidates: candidates.length,
       upserted,
-      remaining_unseen: details.remaining_unseen,
+      remaining_unseen: remainingUnseen,
       checked_at: new Date().toISOString(),
-    })
+    }, { status: hasErrors ? 502 : 200 })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erreur inconnue'
     await finishRun(supabase, run.id, { status: 'error', error_message: message.slice(0, 2000) })
