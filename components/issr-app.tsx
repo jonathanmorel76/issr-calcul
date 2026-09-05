@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { calcIndemKm, fmtDate, fmtEuro, GRILLE, PRIME_REP_JOUR, PRIME_REPPLUS_JOUR, SUPPL_20KM } from '@/lib/issr'
+import { calcIndemKm, fmtDate, fmtEuro, PRIME_REP_JOUR, PRIME_REPPLUS_JOUR, scheduleForDate, type IssrRateSchedule } from '@/lib/issr'
 import { jsPDF } from 'jspdf'
 import { autoTable } from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
@@ -9,13 +9,15 @@ import * as XLSX from 'xlsx'
 type Entry = {
   id: string; user_id: string; date: string; origine: string; destination: string; km: number;
   is_rep: boolean; is_rep_plus: boolean; indem_km: number; prime_rep: number; prime_rep_plus: number;
-  total: number; distance_source: 'osrm'|'manual'; created_at?: string
+  total: number; distance_source: 'osrm'|'manual'; created_at?: string;
+  rate_schedule_id?: string|null; rate_code?: string|null; rate_source_url?: string|null
 }
 type Suggestion = { label:string; context:string; lon:number; lat:number }
 
 export default function IssrApp({ userId }: { userId: string }) {
   const supabase = useMemo(()=>createClient(), [])
   const [entries,setEntries]=useState<Entry[]>([])
+  const [rateSchedules,setRateSchedules]=useState<IssrRateSchedule[]>([])
   const [loading,setLoading]=useState(true)
   const [saving,setSaving]=useState(false)
   const [status,setStatus]=useState<{text:string;type:'success'|'error'}|null>(null)
@@ -31,7 +33,12 @@ export default function IssrApp({ userId }: { userId: string }) {
   const [originCoords,setOriginCoords]=useState<[number,number]|null>(null)
   const [destCoords,setDestCoords]=useState<[number,number]|null>(null)
 
-  useEffect(()=>{ loadEntries() },[])
+  useEffect(()=>{ loadInitialData() },[])
+  async function loadInitialData(){ await Promise.all([loadEntries(), loadRateSchedules()]) }
+  async function loadRateSchedules(){
+    const {data,error}=await supabase.from('issr_rate_schedules').select('*').eq('is_official',true).order('valid_from',{ascending:false})
+    if(error) setStatus({text:`Barèmes ISSR : ${error.message}`,type:'error'}); else setRateSchedules((data??[]) as IssrRateSchedule[])
+  }
   async function loadEntries(){
     setLoading(true)
     const {data,error}=await supabase.from('issr_entries').select('*').order('date',{ascending:false}).order('created_at',{ascending:false})
@@ -63,10 +70,12 @@ export default function IssrApp({ userId }: { userId: string }) {
       const manual=manualKm.trim()!==''&&!Number.isNaN(Number(manualKm))
       const km=manual?Number(manualKm):await routeKm(originCoords??await geocode(origine),destCoords??await geocode(destination))
       if(km<0) throw new Error('Le kilométrage doit être positif.')
-      const indem=calcIndemKm(km), rep=isRep?PRIME_REP_JOUR:0, repPlus=isRepPlus?PRIME_REPPLUS_JOUR:0, total=indem+rep+repPlus
-      const row={user_id:userId,date,origine:origine.trim(),destination:destination.trim(),km,is_rep:isRep,is_rep_plus:isRepPlus,indem_km:indem,prime_rep:rep,prime_rep_plus:repPlus,total,distance_source:manual?'manual':'osrm'}
+      const schedule=scheduleForDate(rateSchedules,date)
+      if(!schedule) throw new Error('Aucun barème ISSR officiel n’est disponible pour cette date.')
+      const indem=calcIndemKm(km,schedule), rep=isRep?PRIME_REP_JOUR:0, repPlus=isRepPlus?PRIME_REPPLUS_JOUR:0, total=indem+rep+repPlus
+      const row={user_id:userId,date,origine:origine.trim(),destination:destination.trim(),km,is_rep:isRep,is_rep_plus:isRepPlus,indem_km:indem,prime_rep:rep,prime_rep_plus:repPlus,total,distance_source:manual?'manual':'osrm',rate_schedule_id:schedule.id,rate_code:schedule.code,rate_source_url:schedule.source_url}
       const {data,error}=await supabase.from('issr_entries').insert(row).select().single(); if(error) throw error
-      setEntries(v=>[data as Entry,...v]); setStatus({text:`${manual?'Manuel':'Calculé'} : ${km} km — ${fmtEuro(total)}`,type:'success'})
+      setEntries(v=>[data as Entry,...v]); setStatus({text:`${manual?'Manuel':'Calculé'} : ${km} km — ${fmtEuro(total)} · ${schedule.code}`,type:'success'})
       setOrigine('');setDestination('');setManualKm('');setIsRep(false);setIsRepPlus(false);setOriginCoords(null);setDestCoords(null);setOriginSuggestions([]);setDestSuggestions([])
     }catch(e:any){setStatus({text:e.message||'Erreur lors de l’ajout.',type:'error'})}finally{setSaving(false)}
   }
@@ -76,6 +85,7 @@ export default function IssrApp({ userId }: { userId: string }) {
   const filtered=useMemo(()=>selectedMonth?entries.filter(e=>e.date.startsWith(selectedMonth)):entries,[entries,selectedMonth])
   const sums=useMemo(()=>filtered.reduce((a,e)=>({jours:a.jours+1,km:a.km+Number(e.indem_km),rep:a.rep+Number(e.prime_rep),repPlus:a.repPlus+Number(e.prime_rep_plus),total:a.total+Number(e.total)}),{jours:0,km:0,rep:0,repPlus:0,total:0}),[filtered])
   const globalTotal=useMemo(()=>entries.reduce((a,e)=>a+Number(e.total),0),[entries])
+  const activeSchedule=useMemo(()=>scheduleForDate(rateSchedules,date),[rateSchedules,date])
   const exportName=`ISSR_${selectedMonth||'toutes-periodes'}`
   function csvEscape(v:unknown){return `"${String(v??'').replaceAll('"','""')}"`}
   function exportCSV(){ if(!filtered.length)return; const head=['N°','Date','Origine','Destination','Km','REP','REP+','Indem. km','Prime REP','Prime REP+','Total']; const rows=filtered.map((e,i)=>[i+1,fmtDate(e.date),e.origine,e.destination,e.km,e.is_rep?'X':'',e.is_rep_plus?'X':'',Number(e.indem_km).toFixed(2),Number(e.prime_rep).toFixed(2),Number(e.prime_rep_plus).toFixed(2),Number(e.total).toFixed(2)]); const total=['','','','','','','','','','TOTAL',sums.total.toFixed(2)]; const csv=[head,...rows,total].map(r=>r.map(csvEscape).join(';')).join('\n'); downloadBlob(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),`${exportName}.csv`) }
@@ -87,6 +97,7 @@ export default function IssrApp({ userId }: { userId: string }) {
     <header className="header"><div className="header-content"><div className="badge">🍎 Enseignant 1er degré</div><h1>Calcul des ISSR</h1><p>Indemnités de Sujétions Spéciales de Remplacement — suivi sécurisé</p><div className="header-actions"><button className="btn btn-ghost" onClick={signOut}>Déconnexion</button></div></div></header>
     <main className="main">
       <section className="card"><div className="api-section"><strong>🚗 Moteur de calcul :</strong><span style={{color:'var(--crayon-green)',fontWeight:800}}>OSRM — sans clé API</span><div className="api-hint">Géocodage par <a href="https://adresse.data.gouv.fr/" target="_blank">Base Adresse Nationale (BAN)</a> · itinéraire par <a href="https://project-osrm.org/" target="_blank">OSRM</a> · données sauvegardées dans ton compte.</div></div></section>
+      <section className="card"><div className="api-section"><strong>⚖️ Barème officiel :</strong>{activeSchedule?<><span style={{color:'var(--crayon-green)',fontWeight:800}}>{activeSchedule.code}</span><div className="api-hint">{activeSchedule.title} · applicable du {fmtDate(activeSchedule.valid_from)}{activeSchedule.valid_to?` au ${fmtDate(activeSchedule.valid_to)}`:' sans date de fin'} · source <a href={activeSchedule.source_url} target="_blank" rel="noreferrer">Légifrance</a>{activeSchedule.source_nor?` · NOR ${activeSchedule.source_nor}`:''}. Dernière vérification : {new Date(activeSchedule.verified_at).toLocaleDateString('fr-FR')}.</div></>:<span style={{color:'var(--rep-plus)',fontWeight:800}}>Aucun barème pour la date sélectionnée</span>}</div></section>
       <section className="card"><div className="add-section"><h2>✏️ Ajouter un déplacement</h2><div className="form-grid">
         <div className="form-group"><label>Date</label><input type="date" value={date} onChange={e=>setDate(e.target.value)}/></div>
         <div className="form-group"><label>Adresse d'origine</label><div className="ac-wrapper"><input type="text" value={origine} onChange={e=>{setOrigine(e.target.value);setOriginCoords(null)}} placeholder="Ex : 12 rue des Écoles, Paris"/>{originSuggestions.length>0&&<div className="ac-dropdown">{originSuggestions.map((s,i)=><div className="ac-item" key={i} onClick={()=>{setOrigine(s.label);setOriginCoords([s.lon,s.lat]);setOriginSuggestions([])}}><strong>{s.label}</strong><div className="ac-sub">{s.context}</div></div>)}</div>}</div></div>
@@ -99,7 +110,7 @@ export default function IssrApp({ userId }: { userId: string }) {
       <section className="card table-section"><div className="table-header"><h2>📋 Déplacements</h2><div className="table-tools"><div className="filter-box"><label className="filter-label">Mois</label><input type="month" value={selectedMonth} onChange={e=>setSelectedMonth(e.target.value)}/></div><button className="btn btn-export" onClick={exportCSV}>CSV</button><button className="btn btn-export" onClick={exportExcel}>Excel</button><button className="btn btn-export" onClick={exportPDF}>PDF</button></div></div>
       {loading?<div className="loading-screen">Chargement des déplacements…</div>:filtered.length===0?<div className="empty-state">Aucun déplacement pour cette période.</div>:<><div className="table-wrapper"><table className="desktop-table"><thead><tr><th>N°</th><th>Date</th><th>Origine</th><th>Destination</th><th>Km</th><th>REP</th><th>REP+</th><th>Indem. km</th><th>Prime REP</th><th>Prime REP+</th><th>Total</th><th></th></tr></thead><tbody>{filtered.map((e,i)=><tr key={e.id}><td className="td-center">{i+1}</td><td>{fmtDate(e.date)}</td><td>{e.origine}</td><td>{e.destination}</td><td className="td-km">{e.km}</td><td className="td-center">{e.is_rep?<span className="tag tag-rep">REP</span>:'—'}</td><td className="td-center">{e.is_rep_plus?<span className="tag tag-repplus">REP+</span>:'—'}</td><td className="td-amount">{fmtEuro(Number(e.indem_km))}</td><td className="td-amount">{Number(e.prime_rep)>0?fmtEuro(Number(e.prime_rep)):'—'}</td><td className="td-amount">{Number(e.prime_rep_plus)>0?fmtEuro(Number(e.prime_rep_plus)):'—'}</td><td className="td-total">{fmtEuro(Number(e.total))}</td><td><button className="btn btn-danger" onClick={()=>removeEntry(e.id)}>✕</button></td></tr>)}</tbody></table></div><div className="mobile-list">{filtered.map(e=><article className="mobile-entry" key={e.id}><div className="mobile-entry-head"><strong>{fmtDate(e.date)}</strong><button className="btn btn-danger" onClick={()=>removeEntry(e.id)}>✕</button></div><div className="mobile-entry-route">{e.origine}<br/>→ {e.destination}</div><div className="mobile-entry-meta"><span className="km-pill">{e.km} km</span>{e.is_rep&&<span className="tag tag-rep">REP</span>}{e.is_rep_plus&&<span className="tag tag-repplus">REP+</span>}</div><div className="mobile-entry-total"><span>ISSR</span><span>{fmtEuro(Number(e.total))}</span></div></article>)}</div></>}
       <div className="totals-bar"><div className="total-item"><div className="total-label">Jours du mois</div><div className="total-value">{sums.jours}</div></div><div className="total-item"><div className="total-label">Indemnités km</div><div className="total-value">{fmtEuro(sums.km)}</div></div><div className="total-item"><div className="total-label">Primes REP</div><div className="total-value">{fmtEuro(sums.rep)}</div></div><div className="total-item"><div className="total-label">Primes REP+</div><div className="total-value">{fmtEuro(sums.repPlus)}</div></div><div className="total-item"><div className="total-label">Total du mois</div><div className="total-value">{fmtEuro(sums.total)}</div></div><div className="total-item total-global"><div className="total-label">Total enregistré</div><div className="total-value">{fmtEuro(globalTotal)}</div></div></div></section>
-      <section className="card"><div className="ref-section"><h3>📐 Grille de référence ISSR</h3><div className="ref-grid"><div className="ref-table"><table><thead><tr><th>Tranche kilométrique</th><th>Montant</th></tr></thead><tbody>{GRILLE.map((g,i)=><tr key={i}><td>{i===0?'Moins de 10 km':i===GRILLE.length-1?'De 60 à 80 km':`De ${g.min} à ${g.max} km`}</td><td>{fmtEuro(g.montant)}</td></tr>)}<tr><td>Par tranche suppl. de 20 km</td><td>+{fmtEuro(SUPPL_20KM)}</td></tr></tbody></table></div><div><div className="prime-item prime-rep"><strong>Prime REP</strong><div>{fmtEuro(PRIME_REP_JOUR)} / jour</div></div><div className="prime-item prime-repplus"><strong>Prime REP+</strong><div>{fmtEuro(PRIME_REPPLUS_JOUR)} / jour</div></div></div></div></div></section>
+      <section className="card"><div className="ref-section"><h3>📐 Grille ISSR applicable à la date sélectionnée</h3>{activeSchedule?<><div className="ref-grid"><div className="ref-table"><table><thead><tr><th>Tranche kilométrique</th><th>Montant</th></tr></thead><tbody>{activeSchedule.brackets.map((g,i)=><tr key={i}><td>{i===0?'Moins de 10 km':i===activeSchedule.brackets.length-1?'De 60 à 80 km':`De ${Math.trunc(g.min)} à ${Math.trunc(g.max)} km`}</td><td>{fmtEuro(Number(g.amount))}</td></tr>)}<tr><td>Par tranche suppl. de 20 km</td><td>+{fmtEuro(Number(activeSchedule.extra_20km))}</td></tr></tbody></table></div><div><div className="prime-item prime-rep"><strong>Prime REP</strong><div>{fmtEuro(PRIME_REP_JOUR)} / jour</div></div><div className="prime-item prime-repplus"><strong>Prime REP+</strong><div>{fmtEuro(PRIME_REPPLUS_JOUR)} / jour</div></div><div className="hint" style={{marginTop:12}}><strong>Source officielle :</strong><br/><a href={activeSchedule.source_url} target="_blank" rel="noreferrer">{activeSchedule.source_name} — {activeSchedule.source_nor||activeSchedule.code}</a></div></div></div></>:<div className="empty-state">Aucun barème officiel trouvé pour cette date.</div>}</div></section>
       <footer className="footer">Outil de calcul ISSR · Les distances calculées peuvent différer du référentiel ARIA</footer>
     </main>
   </>
