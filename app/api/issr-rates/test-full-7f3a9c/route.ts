@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { GET as runSync } from '../../sync/route'
+import { GET as runSync } from '../sync/route'
 
 export async function GET() {
   const cronSecret = process.env.CRON_SECRET
