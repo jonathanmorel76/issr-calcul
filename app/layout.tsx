@@ -8,8 +8,8 @@ const caveat = Caveat({ subsets: ['latin'], variable: '--font-caveat' })
 const patrick = Patrick_Hand({ subsets: ['latin'], weight: '400', variable: '--font-patrick' })
 
 export const metadata: Metadata = {
-  title: 'Calcul ISSR — Enseignant 1er degré',
-  description: 'Calcul, suivi et export des ISSR pour les enseignants du premier degré.',
+  title: 'Mon Remplacement — Assistant des enseignants remplaçants',
+  description: 'Mon Remplacement centralise les déplacements, indemnités ISSR et outils utiles aux enseignants remplaçants.',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
