@@ -24,19 +24,19 @@ export default function LoginPage() {
 
   return <main className="auth-page">
     <section className="auth-board">
-      <div className="badge">🍎 Enseignant 1er degré</div>
-      <h1>ISSR Calcul</h1>
-      <p>Ton suivi ISSR, sécurisé et accessible sur tous tes appareils.</p>
+      <div className="badge">📍 L’assistant des enseignants remplaçants</div>
+      <h1>Mon Remplacement</h1>
+      <p>Retrouve tes déplacements, tes indemnités et bientôt l’ensemble de tes missions au même endroit.</p>
     </section>
     <section className="auth-card card">
-      <h2>{mode === 'login' ? 'Se connecter' : 'Créer mon compte'}</h2>
+      <h2>{mode === 'login' ? 'Bienvenue' : 'Créer mon espace'}</h2>
       <form onSubmit={submit} className="auth-form">
         <label>E-mail<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} /></label>
         <label>Mot de passe<input type="password" required minLength={6} value={password} onChange={e=>setPassword(e.target.value)} /></label>
-        <button className="btn btn-primary" disabled={loading}>{loading ? 'Chargement…' : mode === 'login' ? 'Connexion' : 'Créer le compte'}</button>
+        <button className="btn btn-primary" disabled={loading}>{loading ? 'Chargement…' : mode === 'login' ? 'Accéder à mon espace' : 'Créer mon espace'}</button>
       </form>
       {message && <p className="auth-message">{message}</p>}
-      <button className="link-btn" onClick={()=>{setMode(mode==='login'?'signup':'login');setMessage('')}}>{mode === 'login' ? 'Pas encore de compte ? Créer un compte' : 'Déjà inscrit ? Se connecter'}</button>
+      <button className="link-btn" onClick={()=>{setMode(mode==='login'?'signup':'login');setMessage('')}}>{mode === 'login' ? 'Pas encore de compte ? Créer mon espace' : 'Déjà inscrit ? Se connecter'}</button>
     </section>
   </main>
 }
