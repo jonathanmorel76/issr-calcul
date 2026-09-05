@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Caveat, Nunito, Patrick_Hand } from 'next/font/google'
 import './globals.css'
+import './modern.css'
 
 const nunito = Nunito({ subsets: ['latin'], variable: '--font-nunito' })
 const caveat = Caveat({ subsets: ['latin'], variable: '--font-caveat' })
