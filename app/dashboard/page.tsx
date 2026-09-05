@@ -8,10 +8,11 @@ export default async function Dashboard() {
   const userId = data?.claims?.sub as string | undefined
   if (!userId) redirect('/login')
 
-  const {data:entries} = await supabase
-    .from('issr_entries')
-    .select('travel_date,distance_km,total_amount,rep_bonus,rep_plus_bonus')
-    .order('travel_date',{ascending:false})
+  const [{data:entries},{data:missions},{data:establishments}] = await Promise.all([
+    supabase.from('issr_entries').select('travel_date,distance_km,total_amount,rep_bonus,rep_plus_bonus').order('travel_date',{ascending:false}),
+    supabase.from('issr_missions').select('id,title,start_date,end_date,status,establishment_id,issr_establishments(name)').order('start_date',{ascending:true}),
+    supabase.from('issr_establishments').select('id,name,address,is_rep,is_rep_plus,usual_distance_km,notes').order('name',{ascending:true})
+  ])
 
-  return <AppShell userId={userId} initialEntries={(entries??[]) as any} initialMissions={[]} />
+  return <AppShell userId={userId} initialEntries={(entries??[]) as any} initialMissions={(missions??[]) as any} initialEstablishments={(establishments??[]) as any} />
 }
