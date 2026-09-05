@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/issr-rates/sync", "schedule": "0 5 * * *" }
+  ]
+}
