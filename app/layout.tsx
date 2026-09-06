@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
 import AppUtilityMenu from '@/components/app-utility-menu'
 import RateRangeDisplayFix from '@/components/rate-range-display-fix'
+import WidgetCustomizerSync from '@/components/widget-customizer-sync'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
@@ -21,5 +22,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/>{children}</body></html>
 }
