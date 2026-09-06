@@ -3,6 +3,7 @@ import { Manrope } from 'next/font/google'
 import './globals.css'
 import './modern.css'
 import './dashboard.css'
+import './brand.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
