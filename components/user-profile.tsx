@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import AppIcon from '@/components/app-icon'
 
 export type AvatarKind = 'teacher_male' | 'teacher_female' | 'photo'
 
@@ -37,7 +38,8 @@ export function ProfileAvatar({ kind, photoUrl, size = 'md', className = '' }: {
   if (resolved === 'photo' && photoUrl) {
     return <span className={`profile-avatar profile-avatar-${size} ${className}`.trim()}><img src={photoUrl} alt="Photo de profil" /></span>
   }
-  return <span className={`profile-avatar profile-avatar-${size} profile-avatar-illustrated ${className}`.trim()} aria-label={resolved === 'teacher_female' ? 'Avatar enseignante' : 'Avatar enseignant'}>{resolved === 'teacher_female' ? '👩‍🏫' : '👨‍🏫'}</span>
+  const female = resolved === 'teacher_female'
+  return <span className={`profile-avatar profile-avatar-${size} profile-avatar-illustrated ${className}`.trim()} aria-label={female ? 'Avatar enseignante' : 'Avatar enseignant'}><AppIcon name={female ? 'teacher-female' : 'teacher-male'} className="profile-avatar-icon" size={size === 'lg' ? 48 : size === 'md' ? 35 : 26}/></span>
 }
 
 export function useUserProfile() {
