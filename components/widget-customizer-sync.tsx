@@ -37,6 +37,22 @@ function syncCustomizerOrder() {
   for (const row of [...active, ...inactive]) toggles.appendChild(row)
 }
 
+function ensureCloseButton() {
+  const customizer = document.querySelector<HTMLElement>('.widget-customizer')
+  if (!customizer || customizer.querySelector('.widget-customizer-close')) return
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.className = 'widget-customizer-close'
+  button.setAttribute('aria-label', 'Fermer la personnalisation')
+  button.title = 'Fermer'
+  button.innerHTML = '<span aria-hidden="true">×</span>'
+  button.addEventListener('click', () => {
+    const personalize = Array.from(document.querySelectorAll<HTMLButtonElement>('.dashboard-toolbar button')).find(btn => btn.textContent?.includes('Personnaliser'))
+    personalize?.click()
+  })
+  customizer.prepend(button)
+}
+
 export default function WidgetCustomizerSync() {
   useEffect(() => {
     let scheduled = false
@@ -45,6 +61,7 @@ export default function WidgetCustomizerSync() {
       scheduled = true
       requestAnimationFrame(() => {
         scheduled = false
+        ensureCloseButton()
         syncCustomizerOrder()
       })
     }
