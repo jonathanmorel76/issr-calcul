@@ -9,23 +9,45 @@ export default function DashboardViewNavigation(){
  const pathname=usePathname()
  useEffect(()=>{
   if(pathname!=='/dashboard')return
-  const listeners:Array<()=>void>=[]
+  const bound=new WeakSet<HTMLButtonElement>()
+  let queryApplied=false
+
+  function bindRouteButton(button:HTMLButtonElement|undefined,href:string){
+   if(!button)return
+   if(button.disabled)button.disabled=false
+   button.removeAttribute('disabled')
+   button.setAttribute('aria-disabled','false')
+   if(bound.has(button))return
+   button.addEventListener('click',()=>{window.location.href=href})
+   bound.add(button)
+  }
+
   function setup(){
    const nav=document.querySelector<HTMLElement>('.product-tabs')
    if(!nav)return
    const buttons=Array.from(nav.querySelectorAll<HTMLButtonElement>('button'))
-   const bilans=buttons.find(b=>b.textContent?.trim()==='Mes bilans')
-   const documents=buttons.find(b=>b.textContent?.trim()==='Mes documents')
-   if(bilans&&bilans.disabled){bilans.disabled=false;const fn=()=>{window.location.href='/dashboard/bilans'};bilans.addEventListener('click',fn);listeners.push(()=>bilans.removeEventListener('click',fn))}
-   if(documents&&documents.disabled){documents.disabled=false;const fn=()=>{window.location.href='/dashboard/documents'};documents.addEventListener('click',fn);listeners.push(()=>documents.removeEventListener('click',fn))}
-   const wanted=new URLSearchParams(window.location.search).get('view')
-   const label=wanted?VIEW_LABELS[wanted]:null
-   if(label){const target=buttons.find(b=>b.textContent?.trim()===label);target?.click();window.history.replaceState({},'',window.location.pathname)}
+   bindRouteButton(buttons.find(b=>b.textContent?.trim()==='Mes bilans'),'/dashboard/bilans')
+   bindRouteButton(buttons.find(b=>b.textContent?.trim()==='Mes documents'),'/dashboard/documents')
+
+   if(!queryApplied){
+    const wanted=new URLSearchParams(window.location.search).get('view')
+    const label=wanted?VIEW_LABELS[wanted]:null
+    if(label){
+     const target=buttons.find(b=>b.textContent?.trim()===label)
+     if(target){
+      queryApplied=true
+      target.click()
+      window.history.replaceState({},'',window.location.pathname)
+     }
+    }
+   }
   }
+
   const frame=requestAnimationFrame(setup)
-  const observer=new MutationObserver(()=>setup())
-  observer.observe(document.body,{childList:true,subtree:true})
-  return()=>{cancelAnimationFrame(frame);observer.disconnect();listeners.forEach(fn=>fn())}
+  const observer=new MutationObserver(()=>requestAnimationFrame(setup))
+  observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']})
+  window.addEventListener('popstate',setup)
+  return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('popstate',setup)}
  },[pathname])
  return null
 }
