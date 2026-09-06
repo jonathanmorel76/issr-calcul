@@ -1,5 +1,5 @@
 @media (max-width:650px){
-  /* iOS Safari gives date/month controls an intrinsic width that can ignore the card content box. */
+  /* iOS Safari can give date/month controls an intrinsic width. Keep the control in the card without clipping its value. */
   .account-view section{overflow:visible!important}
   .account-view label{min-width:0!important;max-width:100%!important;width:100%!important;overflow:visible!important}
   .account-view input[type="date"],
@@ -15,18 +15,21 @@
     max-inline-size:100%!important;
     max-width:100%!important;
     margin:0!important;
-    padding-inline:.82rem!important;
-    overflow:hidden!important;
+    padding-inline:.78rem!important;
+    overflow:visible!important;
+    font-size:16px!important;
+    line-height:1.25!important;
   }
   .account-view input[type="date"]::-webkit-date-and-time-value,
   .account-view input[type="month"]::-webkit-date-and-time-value{
     min-width:0!important;
     width:100%!important;
-    text-align:center!important;
+    text-align:left!important;
   }
   .account-view input[type="date"]::-webkit-datetime-edit,
   .account-view input[type="month"]::-webkit-datetime-edit{
     min-width:0!important;
     width:100%!important;
+    padding:0!important;
   }
 }
