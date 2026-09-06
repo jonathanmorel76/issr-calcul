@@ -8,6 +8,7 @@ import './widgets.css'
 import './brand.css'
 import './app-menu.css'
 import './profile.css'
+import './icon-overrides.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
