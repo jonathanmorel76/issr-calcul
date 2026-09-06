@@ -9,6 +9,7 @@ export type UserProfile = {
   user_id: string
   display_name: string | null
   birth_date: string | null
+  teaching_start_date: string | null
   avatar_kind: AvatarKind
   avatar_path: string | null
 }
@@ -55,8 +56,8 @@ export function useUserProfile() {
       setLoading(false)
       return
     }
-    const { data } = await supabase.from('issr_profiles').select('user_id,display_name,birth_date,avatar_kind,avatar_path').eq('user_id', id).maybeSingle()
-    setProfile((data as UserProfile | null) ?? { user_id: id, display_name: null, birth_date: null, avatar_kind: 'teacher_male', avatar_path: null })
+    const { data } = await supabase.from('issr_profiles').select('user_id,display_name,birth_date,teaching_start_date,avatar_kind,avatar_path').eq('user_id', id).maybeSingle()
+    setProfile((data as UserProfile | null) ?? { user_id: id, display_name: null, birth_date: null, teaching_start_date: null, avatar_kind: 'teacher_male', avatar_path: null })
     setLoading(false)
   }
 
