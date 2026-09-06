@@ -23,39 +23,52 @@ function weatherIcon(code: number) {
   return '🌤️'
 }
 
-export default function DashboardProfileHeader({ defaultOrigin }: { defaultOrigin: string }) {
+export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }: { defaultOrigin: string }) {
   const { profile, avatarUrl, loading } = useUserProfile()
   const [weather, setWeather] = useState<Weather | null>(null)
-  const [weatherLoading, setWeatherLoading] = useState(false)
+  const [weatherLoading, setWeatherLoading] = useState(true)
   const [weatherUnavailable, setWeatherUnavailable] = useState(false)
+  const [locationDenied, setLocationDenied] = useState(false)
 
   useEffect(() => {
-    if (!defaultOrigin.trim()) {
-      setWeather(null)
+    if (!navigator.geolocation) {
+      setWeatherLoading(false)
       setWeatherUnavailable(true)
       return
     }
+    let active = true
     const ctrl = new AbortController()
-    setWeatherLoading(true)
-    setWeatherUnavailable(false)
-    fetch(`/api/weather?address=${encodeURIComponent(defaultOrigin.trim())}`, { signal: ctrl.signal })
-      .then(async response => {
-        if (!response.ok) throw new Error('Météo indisponible')
-        return response.json()
-      })
-      .then(data => setWeather(data as Weather))
-      .catch(() => { if (!ctrl.signal.aborted) setWeatherUnavailable(true) })
-      .finally(() => { if (!ctrl.signal.aborted) setWeatherLoading(false) })
-    return () => ctrl.abort()
-  }, [defaultOrigin])
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        if (!active) return
+        const { latitude, longitude } = position.coords
+        fetch(`/api/weather?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`, { signal: ctrl.signal })
+          .then(async response => {
+            if (!response.ok) throw new Error('Météo indisponible')
+            return response.json()
+          })
+          .then(data => { if (active) setWeather(data as Weather) })
+          .catch(() => { if (active && !ctrl.signal.aborted) setWeatherUnavailable(true) })
+          .finally(() => { if (active && !ctrl.signal.aborted) setWeatherLoading(false) })
+      },
+      error => {
+        if (!active) return
+        setWeatherLoading(false)
+        setWeatherUnavailable(true)
+        setLocationDenied(error.code === error.PERMISSION_DENIED)
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 10 * 60 * 1000 },
+    )
+    return () => { active = false; ctrl.abort() }
+  }, [])
 
   const age = ageFromBirthDate(profile?.birth_date)
   const birthday = isBirthday(profile?.birth_date)
   const name = profile?.display_name?.trim() || 'Mon profil'
 
   return <div className="dashboard-profile-cluster">
-    <div className="dashboard-weather" aria-label="Météo locale">
-      {weatherLoading ? <><span className="weather-icon">…</span><div><strong>Météo</strong><small>Actualisation…</small></div></> : weather ? <><span className="weather-icon">{weatherIcon(weather.weather_code)}</span><div><strong>{Math.round(weather.temperature)}°C · {weather.description}</strong><small>{weather.city}{weather.precipitation > 0 ? ` · ${weather.precipitation} mm` : ''}</small></div></> : <><span className="weather-icon">🌤️</span><div><strong>Météo</strong><small>{weatherUnavailable ? 'Adresse habituelle à renseigner' : 'Indisponible'}</small></div></>}
+    <div className="dashboard-weather" aria-label="Météo selon votre position actuelle">
+      {weatherLoading ? <><span className="weather-icon">…</span><div><strong>Météo</strong><small>Localisation en cours…</small></div></> : weather ? <><span className="weather-icon">{weatherIcon(weather.weather_code)}</span><div><strong>{Math.round(weather.temperature)}°C · {weather.description}</strong><small>📍 {weather.city}{weather.precipitation > 0 ? ` · ${weather.precipitation} mm` : ''}</small></div></> : <><span className="weather-icon">🌤️</span><div><strong>Météo locale</strong><small>{locationDenied ? 'Autorisez la localisation pour l’afficher' : weatherUnavailable ? 'Localisation indisponible' : 'Indisponible'}</small></div></>}
     </div>
     <div className="dashboard-profile-copy">
       {birthday && <span className="birthday-chip">🎂 Joyeux anniversaire !</span>}
