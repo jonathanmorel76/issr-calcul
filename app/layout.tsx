@@ -19,6 +19,7 @@ import './mobile-field-fixes.css'
 import './profile-mobile-fixes.css'
 import './autocomplete.css'
 import './mission-weekday-prefilter.css'
+import './indemnity-period-fix.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
