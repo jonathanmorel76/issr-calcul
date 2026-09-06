@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
+import AppUtilityMenu from '@/components/app-utility-menu'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
 import './widgets.css'
 import './brand.css'
+import './app-menu.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
@@ -14,5 +16,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/>{children}</body></html>
 }
