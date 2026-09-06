@@ -26,7 +26,7 @@ function weatherIcon(code: number): AppIconName {
 function weatherVisual(code: number) {
   if (code === 0) return <span className="weather-visual weather-visual-sun"><AppIcon name="weather-sun" size={22}/></span>
   if (code === 1 || code === 2) return <span className="weather-visual weather-visual-partly"><AppIcon name="weather-sun" size={16} className="weather-layer-sun"/><AppIcon name="weather-cloud" size={22} className="weather-layer-cloud"/></span>
-  if (code === 3) return <span className="weather-visual weather-visual-overcast"><AppIcon name="weather-cloud" size={17} className="weather-layer-cloud-back"/><AppIcon name="weather-cloud" size={22} className="weather-layer-cloud-front"/></span>
+  if (code === 3) return <span className="weather-visual weather-visual-overcast"><AppIcon name="weather-cloud" size={23}/></span>
   const icon = weatherIcon(code)
   return <span className={`weather-visual weather-visual-${icon.replace('weather-','')}`}><AppIcon name={icon} size={22}/></span>
 }
