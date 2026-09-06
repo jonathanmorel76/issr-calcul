@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import AppIcon, { type AppIconName } from '@/components/app-icon'
 import { ProfileAvatar, ageFromBirthDate, isBirthday, useUserProfile } from '@/components/user-profile'
 
 type Weather = {
@@ -13,14 +14,14 @@ type Weather = {
   description: string
 }
 
-function weatherIcon(code: number) {
-  if (code === 0) return '☀️'
-  if (code <= 3) return '⛅️'
-  if ([45,48].includes(code)) return '🌫️'
-  if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return '🌧️'
-  if ([71,73,75,77,85,86].includes(code)) return '🌨️'
-  if ([95,96,99].includes(code)) return '⛈️'
-  return '🌤️'
+function weatherIcon(code: number): AppIconName {
+  if (code === 0) return 'weather-sun'
+  if (code <= 3) return 'weather-cloud'
+  if ([45,48].includes(code)) return 'weather-fog'
+  if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return 'weather-rain'
+  if ([71,73,75,77,85,86].includes(code)) return 'weather-snow'
+  if ([95,96,99].includes(code)) return 'weather-storm'
+  return 'weather-cloud'
 }
 
 function teachingSince(value: string | null | undefined) {
@@ -90,10 +91,10 @@ export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }
 
   return <div className="dashboard-profile-cluster">
     <div className="dashboard-weather" aria-label="Météo selon votre position actuelle">
-      {weatherLoading ? <><span className="weather-icon">…</span><div><strong>Météo</strong><small>Localisation en cours…</small></div></> : weather ? <><span className="weather-icon">{weatherIcon(weather.weather_code)}</span><div><strong>{Math.round(weather.temperature)}°C · {weather.description}</strong><small>📍 {weather.city}{weather.precipitation > 0 ? ` · ${weather.precipitation} mm` : ''}</small></div></> : <><span className="weather-icon">🌤️</span><div><strong>Météo locale</strong><small>{locationDenied ? 'Autorisez la localisation pour l’afficher' : weatherUnavailable ? 'Localisation indisponible' : 'Indisponible'}</small></div></>}
+      {weatherLoading ? <><span className="weather-icon weather-icon-loading"><span/></span><div><strong>Météo</strong><small>Localisation en cours…</small></div></> : weather ? <><span className="weather-icon"><AppIcon name={weatherIcon(weather.weather_code)} size={20}/></span><div><strong>{Math.round(weather.temperature)}°C · {weather.description}</strong><small className="weather-location"><AppIcon name="location" size={12}/>{weather.city}{weather.precipitation > 0 ? ` · ${weather.precipitation} mm` : ''}</small></div></> : <><span className="weather-icon"><AppIcon name="weather-cloud" size={20}/></span><div><strong>Météo locale</strong><small>{locationDenied ? 'Autorisez la localisation pour l’afficher' : weatherUnavailable ? 'Localisation indisponible' : 'Indisponible'}</small></div></>}
     </div>
     <div className="dashboard-profile-copy">
-      {birthday && <span className="birthday-chip">🎂 Joyeux anniversaire !</span>}
+      {birthday && <span className="birthday-chip"><AppIcon name="birthday" size={14}/> Joyeux anniversaire !</span>}
       <strong>{loading ? 'Mon profil' : name}</strong>
       <small>{age !== null ? `${age} ans` : 'Âge non renseigné'}</small>
       {teachingLabel && <small>{teachingLabel}</small>}
