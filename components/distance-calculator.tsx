@@ -23,7 +23,7 @@ export default function DistanceCalculator({origin,destination,value,onChange}:P
  const [busy,setBusy]=useState(false)
  const [message,setMessage]=useState('')
  async function calculate(){
-  if(!origin.trim()){setMessage('Renseignez votre adresse de départ habituelle.');return}
+  if(!origin.trim()){setMessage('Renseignez l’adresse de votre établissement de rattachement administratif.');return}
   if(!destination.trim()){setMessage('Renseignez l’adresse de l’établissement.');return}
   setBusy(true);setMessage('')
   try{
@@ -35,6 +35,6 @@ export default function DistanceCalculator({origin,destination,value,onChange}:P
  }
  return <div className="distance-calculator">
   <div className="distance-field"><label>Distance de référence (km)<input type="number" min="0" step="0.1" value={value} onChange={e=>onChange(e.target.value)} placeholder="Calcul automatique ou saisie manuelle"/></label><button type="button" className="btn btn-secondary" onClick={calculate} disabled={busy}>{busy?'Calcul du trajet…':'Calculer la distance'}</button></div>
-  <small className={message?'distance-feedback visible':'distance-feedback'}>{message||'Le trajet routier est calculé entre votre adresse habituelle et cet établissement.'}</small>
+  <small className={message?'distance-feedback visible':'distance-feedback'}>{message||'Le trajet routier est calculé entre votre établissement de rattachement administratif et cet établissement.'}</small>
  </div>
 }
