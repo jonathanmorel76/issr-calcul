@@ -23,6 +23,13 @@ function weatherIcon(code: number) {
   return '🌤️'
 }
 
+function teachingSince(value: string | null | undefined) {
+  if (!value) return null
+  const date = new Date(`${value}T12:00:00`)
+  if (Number.isNaN(date.getTime())) return null
+  return `Enseigne depuis le ${date.toLocaleDateString('fr-FR')}`
+}
+
 export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }: { defaultOrigin: string }) {
   const { profile, avatarUrl, loading } = useUserProfile()
   const [weather, setWeather] = useState<Weather | null>(null)
@@ -65,6 +72,7 @@ export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }
   const age = ageFromBirthDate(profile?.birth_date)
   const birthday = isBirthday(profile?.birth_date)
   const name = profile?.display_name?.trim() || 'Mon profil'
+  const teachingLabel = teachingSince(profile?.teaching_start_date)
 
   return <div className="dashboard-profile-cluster">
     <div className="dashboard-weather" aria-label="Météo selon votre position actuelle">
@@ -74,6 +82,7 @@ export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }
       {birthday && <span className="birthday-chip">🎂 Joyeux anniversaire !</span>}
       <strong>{loading ? 'Mon profil' : name}</strong>
       <small>{age !== null ? `${age} ans` : 'Âge non renseigné'}</small>
+      {teachingLabel && <small>{teachingLabel}</small>}
     </div>
     <ProfileAvatar kind={profile?.avatar_kind} photoUrl={avatarUrl} size="lg" />
   </div>
