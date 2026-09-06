@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import AppIcon, { type AppIconName } from '@/components/app-icon'
 import { ProfileAvatar, ageFromBirthDate, isBirthday, useUserProfile } from '@/components/user-profile'
+import { teacherStatusLabel } from '@/lib/teacher-status'
 
 type Weather = {
   city: string
@@ -95,6 +96,7 @@ export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }
   const birthday = isBirthday(profile?.birth_date)
   const name = profile?.display_name?.trim() || 'Mon profil'
   const teachingLabel = teachingSince(profile?.teaching_start_date)
+  const statusLabel = teacherStatusLabel(profile?.teacher_status, true)
 
   return <div className="dashboard-profile-cluster">
     <div className="dashboard-weather" aria-label="Météo selon votre position actuelle">
@@ -104,6 +106,7 @@ export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }
       {birthday && <span className="birthday-chip"><AppIcon name="birthday" size={14}/> Joyeux anniversaire !</span>}
       <strong>{loading ? 'Mon profil' : name}</strong>
       <small>{age !== null ? `${age} ans` : 'Âge non renseigné'}</small>
+      {statusLabel && <small className="dashboard-profile-status">{statusLabel}</small>}
       {teachingLabel && <small>{teachingLabel}</small>}
     </div>
     <ProfileAvatar kind={profile?.avatar_kind} photoUrl={avatarUrl} size="lg" />
