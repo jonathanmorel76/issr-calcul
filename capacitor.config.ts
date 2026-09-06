@@ -5,7 +5,7 @@ const serverUrl = process.env.MOBILE_APP_URL
 const config: CapacitorConfig = {
   appId: 'fr.monremplacement.app.beta',
   appName: 'Mon Remplacement Beta',
-  webDir: 'out',
+  webDir: 'mobile-shell',
   server: serverUrl
     ? {
         url: serverUrl,
