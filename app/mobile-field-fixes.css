@@ -1,37 +1,97 @@
 /* Final mobile form layer. Loaded last so Safari controls stay readable, aligned and do not trigger input zoom. */
 @media (max-width:650px){
-  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) input,
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) input:not([type="checkbox"]):not([type="radio"]),
   :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) select,
   :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) textarea{
+    display:block!important;
     box-sizing:border-box!important;
+    inline-size:100%!important;
     width:100%!important;
+    max-inline-size:100%!important;
     max-width:100%!important;
+    min-inline-size:0!important;
     min-width:0!important;
-    min-height:48px!important;
+    min-height:46px!important;
     margin:0!important;
-    padding:.72rem .78rem!important;
+    padding:.68rem .76rem!important;
     font-family:inherit!important;
     font-size:16px!important;
-    font-weight:650!important;
+    font-weight:550!important;
     line-height:1.25!important;
-    letter-spacing:-.01em!important;
+    letter-spacing:0!important;
   }
+
   :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) select{
-    padding-right:2.25rem!important;
+    padding-right:2.2rem!important;
+    text-overflow:ellipsis!important;
   }
-  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) label{
+
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) label,
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) > div{
     min-width:0!important;
     max-width:100%!important;
   }
+
   :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) small{
     overflow-wrap:anywhere;
   }
-  .mr-form{min-width:0!important;overflow:visible!important}
-  .dashboard-panel,.account-profile-card,.account-view section{min-width:0!important}
+
+  .mr-form,
+  .dashboard-panel,
+  .account-profile-card,
+  .account-view,
+  .account-view section,
+  .distance-calculator,
+  .distance-field{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+
+  /* Safari iOS: date/month controls have a native intrinsic width. */
+  :where(.mr-form,.account-view,.indemnities-embedded) input[type="date"],
+  :where(.mr-form,.account-view,.indemnities-embedded) input[type="month"]{
+    -webkit-appearance:none!important;
+    appearance:none!important;
+    inline-size:100%!important;
+    width:100%!important;
+    max-inline-size:100%!important;
+    max-width:100%!important;
+    min-inline-size:0!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  :where(.mr-form,.account-view,.indemnities-embedded) input[type="date"]::-webkit-date-and-time-value,
+  :where(.mr-form,.account-view,.indemnities-embedded) input[type="month"]::-webkit-date-and-time-value{
+    min-width:0!important;
+    width:100%!important;
+    text-align:left!important;
+  }
+  :where(.mr-form,.account-view,.indemnities-embedded) input[type="date"]::-webkit-datetime-edit,
+  :where(.mr-form,.account-view,.indemnities-embedded) input[type="month"]::-webkit-datetime-edit{
+    min-width:0!important;
+    width:auto!important;
+  }
+
+  /* Compact checkboxes/radios: never inherit the full-width text-field rules. */
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) input[type="checkbox"],
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) input[type="radio"]{
+    width:20px!important;
+    height:20px!important;
+    min-width:20px!important;
+    min-height:20px!important;
+    max-width:20px!important;
+    max-height:20px!important;
+    padding:0!important;
+    margin:0!important;
+    flex:0 0 20px!important;
+    accent-color:var(--color-brand-600);
+  }
+  .mr-generate{padding:.75rem .85rem!important}
+  .mr-generate label{align-items:center!important;gap:.65rem!important;font-size:.78rem!important;line-height:1.35!important}
 
   .indemnity-list .table-header{width:100%;}
   .indemnity-list .table-tools{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:.55rem!important;width:100%!important;}
   .indemnity-list .filter-box{width:100%!important;max-width:100%!important;min-width:0!important;flex:none!important;}
-  .indemnity-list .filter-box input[type="month"]{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;min-height:48px!important;font-size:16px!important;line-height:1.25!important;padding:.72rem .82rem!important;border-radius:var(--radius-md)!important;-webkit-appearance:none;appearance:none;}
-  .indemnity-list .btn-export{width:100%!important;max-width:100%!important;margin:0!important;min-height:48px!important;}
+  .indemnity-list .filter-box input[type="month"]{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;min-height:46px!important;font-size:16px!important;line-height:1.25!important;padding:.68rem .76rem!important;border-radius:var(--radius-md)!important;-webkit-appearance:none;appearance:none;}
+  .indemnity-list .btn-export{width:100%!important;max-width:100%!important;margin:0!important;min-height:46px!important;}
 }
