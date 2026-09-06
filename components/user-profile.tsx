@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import AppIcon from '@/components/app-icon'
+import type { TeacherStatus } from '@/lib/teacher-status'
 
 export type AvatarKind = 'teacher_male' | 'teacher_female' | 'photo'
 
@@ -11,6 +12,7 @@ export type UserProfile = {
   display_name: string | null
   birth_date: string | null
   teaching_start_date: string | null
+  teacher_status: TeacherStatus | null
   avatar_kind: AvatarKind
   avatar_path: string | null
 }
@@ -58,8 +60,8 @@ export function useUserProfile() {
       setLoading(false)
       return
     }
-    const { data } = await supabase.from('issr_profiles').select('user_id,display_name,birth_date,teaching_start_date,avatar_kind,avatar_path').eq('user_id', id).maybeSingle()
-    setProfile((data as UserProfile | null) ?? { user_id: id, display_name: null, birth_date: null, teaching_start_date: null, avatar_kind: 'teacher_male', avatar_path: null })
+    const { data } = await supabase.from('issr_profiles').select('user_id,display_name,birth_date,teaching_start_date,teacher_status,avatar_kind,avatar_path').eq('user_id', id).maybeSingle()
+    setProfile((data as UserProfile | null) ?? { user_id: id, display_name: null, birth_date: null, teaching_start_date: null, teacher_status: null, avatar_kind: 'teacher_male', avatar_path: null })
     setLoading(false)
   }
 
