@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
+import './design-system.css'
 import './globals.css'
-import './modern.css'
 import './dashboard.css'
 import './brand.css'
 
