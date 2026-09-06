@@ -37,6 +37,11 @@ function ensureHost(input:HTMLInputElement){
   return host
 }
 
+function removeHost(input:HTMLInputElement){
+  const host=input.parentElement?.querySelector<HTMLElement>(':scope > .geo-autocomplete-host')
+  host?.remove()
+}
+
 function closeHost(host:HTMLElement){host.innerHTML='';host.classList.remove('open')}
 function showLoading(host:HTMLElement){host.innerHTML='<div class="geo-autocomplete-state">Recherche…</div>';host.classList.add('open')}
 function showEmpty(host:HTMLElement){host.innerHTML='<div class="geo-autocomplete-state">Aucune suggestion trouvée</div>';host.classList.add('open')}
@@ -70,6 +75,20 @@ function renderAddresses(host:HTMLElement,items:Address[],onPick:(address:Addres
 
 function escapeHtml(value:string){return value.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]??c))}
 
+function isSchoolNameField(input:HTMLInputElement,label:string){
+  const placeholder=(input.getAttribute('placeholder')??'').toLowerCase()
+  return label==='Nom' && (placeholder.includes('école')||placeholder.includes('ecole')||placeholder.includes('collège')||placeholder.includes('college')||placeholder.includes('lycée')||placeholder.includes('lycee'))
+}
+
+function isAttachmentField(input:HTMLInputElement,label:string){
+  return label==='Établissement de rattachement administratif'
+}
+
+function isAddressField(input:HTMLInputElement,label:string){
+  const placeholder=(input.getAttribute('placeholder')??'').toLowerCase()
+  return label==='Adresse' && (placeholder.includes('adresse')||placeholder==='')
+}
+
 export default function GeolocatedAutocomplete(){
   useEffect(()=>{
     let geo:Geo=null
@@ -102,7 +121,7 @@ export default function GeolocatedAutocomplete(){
             }else{
               setReactInputValue(input,school.name,{suppressAutocomplete:true})
               const form=input.closest('.mr-form')
-              const addressInput=form?Array.from(form.querySelectorAll<HTMLInputElement>('input')).find(i=>labelText(i)==='Adresse'):null
+              const addressInput=form?Array.from(form.querySelectorAll<HTMLInputElement>('input')).find(i=>isAddressField(i,labelText(i))):null
               if(addressInput&&school.address){
                 const addressHost=addressInput.parentElement?.querySelector<HTMLElement>(':scope > .geo-autocomplete-host')
                 if(addressHost)closeHost(addressHost)
@@ -144,9 +163,17 @@ export default function GeolocatedAutocomplete(){
       const inputs=Array.from(document.querySelectorAll<HTMLInputElement>('.mr-form input'))
       for(const input of inputs){
         const label=labelText(input)
-        if(label==='Nom')bindSchool(input,'name')
-        if(label==='Établissement de rattachement administratif')bindSchool(input,'attachment')
-        if(label==='Adresse')bindAddress(input)
+        const schoolName=isSchoolNameField(input,label)
+        const attachment=isAttachmentField(input,label)
+        const address=isAddressField(input,label)
+
+        if(schoolName)bindSchool(input,'name')
+        else if(attachment)bindSchool(input,'attachment')
+        else if(address)bindAddress(input)
+        else {
+          removeHost(input)
+          input.autocomplete='off'
+        }
       }
     }
 
