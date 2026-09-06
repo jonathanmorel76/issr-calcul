@@ -14,10 +14,6 @@ export default function IndemnityMonthFilterPosition(){
       if(!bar){
         bar=document.createElement('section')
         bar.className='indemnity-period-bar'
-        const copy=document.createElement('div')
-        copy.className='indemnity-period-copy'
-        copy.innerHTML='<span>Période affichée</span><small>Les indicateurs et les journées ci-dessous correspondent à ce mois.</small>'
-        bar.appendChild(copy)
         main.insertBefore(bar,summary)
       }
       if(filter.parentElement!==bar)bar.appendChild(filter)
