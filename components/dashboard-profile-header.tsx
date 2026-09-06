@@ -25,9 +25,22 @@ function weatherIcon(code: number) {
 
 function teachingSince(value: string | null | undefined) {
   if (!value) return null
-  const date = new Date(`${value}T12:00:00`)
-  if (Number.isNaN(date.getTime())) return null
-  return `Enseigne depuis le ${date.toLocaleDateString('fr-FR')}`
+  const start = new Date(`${value}T12:00:00`)
+  const now = new Date()
+  if (Number.isNaN(start.getTime()) || start > now) return null
+
+  let totalMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+  if (now.getDate() < start.getDate()) totalMonths -= 1
+  totalMonths = Math.max(0, totalMonths)
+
+  const years = Math.floor(totalMonths / 12)
+  const months = totalMonths % 12
+  let duration = ''
+  if (years === 0) duration = `${totalMonths} mois`
+  else if (months === 0) duration = `${years} an${years > 1 ? 's' : ''}`
+  else duration = `${years} an${years > 1 ? 's' : ''} et ${months} mois`
+
+  return `Enseigne depuis le ${start.toLocaleDateString('fr-FR')} · ${duration}`
 }
 
 export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }: { defaultOrigin: string }) {
