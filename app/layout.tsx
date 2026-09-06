@@ -8,6 +8,7 @@ import MissionWeekdayPrefilter from '@/components/mission-weekday-prefilter'
 import ActiveTabCentering from '@/components/active-tab-centering'
 import IndemnityMonthFilterPosition from '@/components/indemnity-month-filter-position'
 import DashboardViewNavigation from '@/components/dashboard-view-navigation'
+import HeroArtworkHydrator from '@/components/hero-artwork-hydrator'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
@@ -32,5 +33,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/>{children}</body></html>
 }
