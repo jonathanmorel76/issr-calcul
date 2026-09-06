@@ -1,6 +1,6 @@
 'use client'
 
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 export type AppIconName=
  |'home'|'building'|'mission'|'coins'|'chart'|'file'|'rates'|'sources'|'calculator'|'account'
@@ -15,7 +15,7 @@ const common={fill:'none',stroke:'currentColor',strokeWidth:1.9,strokeLinecap:'r
 
 export default function AppIcon({name,size=20,className='',style,title}:Props){
  const a11y=title?{role:'img','aria-label':title}:{'aria-hidden':true as const}
- const paths:Record<AppIconName,React.ReactNode>={
+ const paths:Record<AppIconName,ReactNode>={
   home:<><path {...common} d="M3 11.5 12 4l9 7.5"/><path {...common} d="M5.5 10.5V20h13v-9.5M9.3 20v-5.6h5.4V20"/></>,
   building:<><path {...common} d="M5 20V8.5L12 5l7 3.5V20"/><path {...common} d="M3.5 20h17M8 11h1M8 14.5h1M15 11h1M15 14.5h1M10 20v-3h4v3"/><path {...common} d="M10.5 5V3.5h3V5"/></>,
   mission:<><rect {...common} x="5" y="5.5" width="14" height="15" rx="2"/><path {...common} d="M9 5.5V3.8h6v1.7M8.5 10.5l1.7 1.7 3.2-3.3M8.5 15.5l1.7 1.7 3.2-3.3M14.8 11h1.8M14.8 16h1.8"/></>,
