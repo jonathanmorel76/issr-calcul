@@ -10,9 +10,10 @@ const ART:Record<string,string>={
 }
 
 function kindFor(title:string){
- if(title.includes('mission'))return 'missions'
- if(title.includes('établissement'))return 'establishments'
- if(title.includes('indemnité'))return 'indemnities'
+ const value=title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
+ if(value.includes('mission'))return 'missions'
+ if(value.includes('etablissement'))return 'establishments'
+ if(value.includes('indemnit'))return 'indemnities'
  return 'dashboard'
 }
 
@@ -22,20 +23,25 @@ export default function HeroArtworkHydrator(){
   const hydrate=()=>{
    scheduled=false
    document.querySelectorAll<HTMLElement>('.product-hero').forEach(hero=>{
-    if(hero.querySelector('.hero-school-pattern'))return
-    const title=hero.querySelector('h1')?.textContent?.toLocaleLowerCase('fr-FR')??''
+    const title=hero.querySelector('h1')?.textContent??''
     const kind=kindFor(title)
-    const art=document.createElement('div')
-    art.className=`hero-school-pattern hero-school-pattern-${kind}`
-    art.setAttribute('aria-hidden','true')
-    art.innerHTML=ART[kind]
-    hero.appendChild(art)
+    let art=hero.querySelector<HTMLElement>('.hero-school-pattern')
+    if(!art){
+     art=document.createElement('div')
+     art.setAttribute('aria-hidden','true')
+     hero.appendChild(art)
+    }
+    if(art.dataset.kind!==kind){
+     art.className=`hero-school-pattern hero-school-pattern-${kind}`
+     art.dataset.kind=kind
+     art.innerHTML=ART[kind]
+    }
    })
   }
   const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(hydrate)}
   schedule()
   const observer=new MutationObserver(schedule)
-  observer.observe(document.body,{childList:true,subtree:true})
+  observer.observe(document.body,{childList:true,subtree:true,characterData:true})
   return()=>observer.disconnect()
  },[])
  return null
