@@ -1,27 +1,32 @@
 .quick-panel>button>span{
   position:relative;
-  width:48px;
-  height:48px;
-  flex:0 0 48px;
+  width:50px;
+  height:50px;
+  flex:0 0 50px;
   display:grid;
   place-items:center;
   overflow:hidden;
   border-radius:14px;
   font-size:0!important;
+  line-height:0;
+  padding:0!important;
 }
 .quick-panel>button>span::before,
 .dashboard-toolbar>.btn-secondary::before{
   content:"";
   display:block;
-  width:24px;
-  height:24px;
+  position:absolute;
+  inset:0;
+  margin:auto;
+  width:26px;
+  height:26px;
   background:currentColor;
   -webkit-mask-repeat:no-repeat;
   mask-repeat:no-repeat;
-  -webkit-mask-position:center;
-  mask-position:center;
-  -webkit-mask-size:contain;
-  mask-size:contain;
+  -webkit-mask-position:50% 50%;
+  mask-position:50% 50%;
+  -webkit-mask-size:24px 24px;
+  mask-size:24px 24px;
 }
 .quick-panel>button:nth-of-type(1)>span{
   color:#168f87;
@@ -48,17 +53,23 @@
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='9' cy='8' rx='5' ry='2.5' fill='none' stroke='black' stroke-width='1.9'/%3E%3Cpath d='M4 8v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V8M4 12v3.8c0 1.4 2.2 2.5 5 2.5 1.2 0 2.3-.2 3.2-.5' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round'/%3E%3Cellipse cx='16.5' cy='13.5' rx='3.5' ry='2' fill='none' stroke='black' stroke-width='1.9'/%3E%3Cpath d='M13 13.5v4c0 1.1 1.6 2 3.5 2s3.5-.9 3.5-2v-4' fill='none' stroke='black' stroke-width='1.9'/%3E%3C/svg%3E");
 }
 .dashboard-toolbar>.btn-secondary{
+  position:relative;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:.55rem;
   color:var(--color-brand-800);
   font-size:0!important;
+  padding-left:2.8rem!important;
 }
 .dashboard-toolbar>.btn-secondary::before{
   width:20px;
   height:20px;
-  color:#168f87;
+  left:.95rem;
+  right:auto;
+  color:#17646b;
+  -webkit-mask-size:20px 20px;
+  mask-size:20px 20px;
   -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='black' stroke-width='1.9'/%3E%3Cpath d='M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E");
   mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='black' stroke-width='1.9'/%3E%3Cpath d='M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E");
 }
@@ -75,7 +86,27 @@
 .icon-tone-information{color:#2d7fb8!important;background:#edf6fc!important}
 .icon-tone-settings{color:#17646b!important;background:#edf6f5!important}
 
+/* Keep every custom SVG/pseudo icon optically centered inside its tile */
+.app-menu-home section>button>span,
+.avatar-option span,
+.weather-icon,
+.birthday-chip .app-icon{
+  display:grid;
+  place-items:center;
+}
+.app-menu-home section>button>span .app-icon,
+.avatar-option span .app-icon,
+.weather-icon .app-icon{
+  display:block;
+  margin:auto;
+  flex:none;
+}
+.app-menu-home section>button>span{
+  padding:0!important;
+  line-height:0;
+}
+
 @media(max-width:600px){
-  .quick-panel>button>span{width:46px;height:46px;flex-basis:46px}
+  .quick-panel>button>span{width:48px;height:48px;flex-basis:48px}
   .dashboard-toolbar>.btn-secondary::after{font-size:.88rem}
 }
