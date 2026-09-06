@@ -16,12 +16,19 @@ type Weather = {
 
 function weatherIcon(code: number): AppIconName {
   if (code === 0) return 'weather-sun'
-  if (code <= 3) return 'weather-cloud'
   if ([45,48].includes(code)) return 'weather-fog'
   if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return 'weather-rain'
   if ([71,73,75,77,85,86].includes(code)) return 'weather-snow'
   if ([95,96,99].includes(code)) return 'weather-storm'
   return 'weather-cloud'
+}
+
+function weatherVisual(code: number) {
+  if (code === 0) return <span className="weather-visual weather-visual-sun"><AppIcon name="weather-sun" size={22}/></span>
+  if (code === 1 || code === 2) return <span className="weather-visual weather-visual-partly"><AppIcon name="weather-sun" size={16} className="weather-layer-sun"/><AppIcon name="weather-cloud" size={22} className="weather-layer-cloud"/></span>
+  if (code === 3) return <span className="weather-visual weather-visual-overcast"><AppIcon name="weather-cloud" size={17} className="weather-layer-cloud-back"/><AppIcon name="weather-cloud" size={22} className="weather-layer-cloud-front"/></span>
+  const icon = weatherIcon(code)
+  return <span className={`weather-visual weather-visual-${icon.replace('weather-','')}`}><AppIcon name={icon} size={22}/></span>
 }
 
 function teachingSince(value: string | null | undefined) {
@@ -91,7 +98,7 @@ export default function DashboardProfileHeader({ defaultOrigin: _defaultOrigin }
 
   return <div className="dashboard-profile-cluster">
     <div className="dashboard-weather" aria-label="Météo selon votre position actuelle">
-      {weatherLoading ? <><span className="weather-icon weather-icon-loading"><span/></span><div><strong>Météo</strong><small>Localisation en cours…</small></div></> : weather ? <><span className="weather-icon"><AppIcon name={weatherIcon(weather.weather_code)} size={20}/></span><div><strong>{Math.round(weather.temperature)}°C · {weather.description}</strong><small className="weather-location"><AppIcon name="location" size={12}/>{weather.city}{weather.precipitation > 0 ? ` · ${weather.precipitation} mm` : ''}</small></div></> : <><span className="weather-icon"><AppIcon name="weather-cloud" size={20}/></span><div><strong>Météo locale</strong><small>{locationDenied ? 'Autorisez la localisation pour l’afficher' : weatherUnavailable ? 'Localisation indisponible' : 'Indisponible'}</small></div></>}
+      {weatherLoading ? <><span className="weather-icon weather-icon-loading"><span/></span><div><strong>Météo</strong><small>Localisation en cours…</small></div></> : weather ? <><span className="weather-icon">{weatherVisual(weather.weather_code)}</span><div><strong>{Math.round(weather.temperature)}°C · {weather.description}</strong><small className="weather-location"><AppIcon name="location" size={12}/>{weather.city}{weather.precipitation > 0 ? ` · ${weather.precipitation} mm` : ''}</small></div></> : <><span className="weather-icon"><span className="weather-visual weather-visual-partly"><AppIcon name="weather-sun" size={16} className="weather-layer-sun"/><AppIcon name="weather-cloud" size={22} className="weather-layer-cloud"/></span></span><div><strong>Météo locale</strong><small>{locationDenied ? 'Autorisez la localisation pour l’afficher' : weatherUnavailable ? 'Localisation indisponible' : 'Indisponible'}</small></div></>}
     </div>
     <div className="dashboard-profile-copy">
       {birthday && <span className="birthday-chip"><AppIcon name="birthday" size={14}/> Joyeux anniversaire !</span>}
