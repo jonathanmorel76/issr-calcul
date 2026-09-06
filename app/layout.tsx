@@ -10,6 +10,7 @@ import './app-menu.css'
 import './profile.css'
 import './icon-overrides.css'
 import './mobile-field-fixes.css'
+import './profile-mobile-fixes.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
