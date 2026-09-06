@@ -9,31 +9,42 @@ export default function DashboardViewNavigation(){
  const pathname=usePathname()
  useEffect(()=>{
   if(pathname!=='/dashboard')return
-  const bound=new WeakSet<HTMLButtonElement>()
   let queryApplied=false
+  let scheduled=false
 
-  function bindRouteButton(button:HTMLButtonElement|undefined,href:string){
-   if(!button)return
-   if(button.disabled)button.disabled=false
-   button.removeAttribute('disabled')
-   button.setAttribute('aria-disabled','false')
-   if(bound.has(button))return
-   button.addEventListener('click',()=>{window.location.href=href})
-   bound.add(button)
+  function ensureRouteTab(nav:HTMLElement,label:string,href:string){
+   const native=Array.from(nav.querySelectorAll<HTMLButtonElement>('button')).find(button=>button.textContent?.trim()===label)
+   if(native){
+    native.style.display='none'
+    native.setAttribute('aria-hidden','true')
+    native.tabIndex=-1
+   }
+
+   let link=Array.from(nav.querySelectorAll<HTMLAnchorElement>('a.mr-persistent-route-tab')).find(anchor=>anchor.textContent?.trim()===label)
+   if(!link){
+    link=document.createElement('a')
+    link.className='mr-persistent-route-tab'
+    link.textContent=label
+    link.href=href
+    nav.appendChild(link)
+   }else if(link.getAttribute('href')!==href){
+    link.href=href
+   }
   }
 
   function setup(){
+   scheduled=false
    const nav=document.querySelector<HTMLElement>('.product-tabs')
    if(!nav)return
-   const buttons=Array.from(nav.querySelectorAll<HTMLButtonElement>('button'))
-   bindRouteButton(buttons.find(b=>b.textContent?.trim()==='Mes bilans'),'/dashboard/bilans')
-   bindRouteButton(buttons.find(b=>b.textContent?.trim()==='Mes documents'),'/dashboard/documents')
+
+   ensureRouteTab(nav,'Mes bilans','/dashboard/bilans')
+   ensureRouteTab(nav,'Mes documents','/dashboard/documents')
 
    if(!queryApplied){
     const wanted=new URLSearchParams(window.location.search).get('view')
     const label=wanted?VIEW_LABELS[wanted]:null
     if(label){
-     const target=buttons.find(b=>b.textContent?.trim()===label)
+     const target=Array.from(nav.querySelectorAll<HTMLButtonElement>('button')).find(button=>button.textContent?.trim()===label)
      if(target){
       queryApplied=true
       target.click()
@@ -43,11 +54,17 @@ export default function DashboardViewNavigation(){
    }
   }
 
-  const frame=requestAnimationFrame(setup)
-  const observer=new MutationObserver(()=>requestAnimationFrame(setup))
-  observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled']})
-  window.addEventListener('popstate',setup)
-  return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('popstate',setup)}
+  function scheduleSetup(){
+   if(scheduled)return
+   scheduled=true
+   requestAnimationFrame(setup)
+  }
+
+  scheduleSetup()
+  const observer=new MutationObserver(scheduleSetup)
+  observer.observe(document.body,{childList:true,subtree:true})
+  window.addEventListener('popstate',scheduleSetup)
+  return()=>{observer.disconnect();window.removeEventListener('popstate',scheduleSetup)}
  },[pathname])
  return null
 }
