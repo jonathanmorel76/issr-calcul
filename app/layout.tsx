@@ -22,6 +22,7 @@ import './autocomplete.css'
 import './mission-weekday-prefilter.css'
 import './indemnity-period-fix.css'
 import './secondary-views.css'
+import './hero-school-patterns.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
