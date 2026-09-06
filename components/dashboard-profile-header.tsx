@@ -36,7 +36,8 @@ function teachingSince(value: string | null | undefined) {
   const years = Math.floor(totalMonths / 12)
   const months = totalMonths % 12
   let duration = ''
-  if (years === 0) duration = `${totalMonths} mois`
+  if (totalMonths === 0) duration = '< 1 mois'
+  else if (years === 0) duration = `${totalMonths} mois`
   else if (months === 0) duration = `${years} an${years > 1 ? 's' : ''}`
   else duration = `${years} an${years > 1 ? 's' : ''} et ${months} mois`
 
