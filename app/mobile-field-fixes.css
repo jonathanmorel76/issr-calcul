@@ -1,0 +1,8 @@
+/* Final mobile field alignment layer. Loaded last so Safari-specific controls match the rest of the UI. */
+@media (max-width:650px){
+  .indemnity-list .table-header{width:100%;}
+  .indemnity-list .table-tools{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:.55rem!important;width:100%!important;}
+  .indemnity-list .filter-box{width:100%!important;max-width:100%!important;min-width:0!important;flex:none!important;}
+  .indemnity-list .filter-box input[type="month"]{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;min-height:48px!important;font-size:16px!important;line-height:1.25!important;padding:.72rem .82rem!important;border-radius:var(--radius-md)!important;-webkit-appearance:none;appearance:none;}
+  .indemnity-list .btn-export{width:100%!important;max-width:100%!important;margin:0!important;min-height:48px!important;}
+}
