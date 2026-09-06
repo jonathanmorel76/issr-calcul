@@ -1,0 +1,34 @@
+.dashboard-hero-actions{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;justify-content:flex-end}
+.btn-hero-primary,.btn-hero-secondary{min-height:44px;border-radius:var(--radius-md);font-weight:800;padding:.72rem 1rem}
+.btn-hero-primary{background:var(--color-surface);color:var(--color-brand-900);border:1px solid rgba(255,255,255,.8);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.btn-hero-primary:hover{background:#f9fbfa;transform:translateY(-1px)}
+.btn-hero-secondary{background:rgba(255,255,255,.08);color:var(--color-on-dark);border:1px solid rgba(255,255,255,.18);box-shadow:none}
+.btn-hero-secondary:hover{background:rgba(255,255,255,.14)}
+
+.widget-customizer{display:grid;grid-template-columns:minmax(0,1fr) 1.35fr;gap:var(--space-5);padding:var(--space-5);margin-bottom:var(--space-4);background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-xl);box-shadow:var(--shadow-md)}
+.widget-customizer strong{display:block;color:var(--color-brand-800);font-size:1rem}
+.widget-customizer p{margin:.35rem 0 0;color:var(--text-secondary);font-size:.82rem;line-height:1.5}
+.widget-toggles{display:flex;align-items:center;justify-content:flex-end;gap:var(--space-2);flex-wrap:wrap}
+.widget-toggles label{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem .7rem;background:var(--surface-soft);border:1px solid var(--border-default);border-radius:var(--radius-pill);font-size:.76rem;font-weight:800;color:var(--text-primary);cursor:pointer}
+.widget-toggles label:has(input:checked){background:var(--surface-success);border-color:rgba(105,167,91,.28);color:#416d39}
+.widget-toggles input{width:16px;height:16px;accent-color:var(--color-accent-green)}
+
+.widget-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--space-4);align-items:start}
+.dashboard-widget{background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:var(--space-5);min-height:180px;transition:transform var(--transition-fast),box-shadow var(--transition-fast),border-color var(--transition-fast)}
+.dashboard-widget:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--border-strong)}
+.dashboard-widget h2{margin:.2rem 0 0;color:var(--color-brand-800);font-size:1.15rem}
+.dashboard-widget p{color:var(--text-secondary);font-size:.82rem;line-height:1.5;margin:.55rem 0}
+.widget-heading{display:flex;justify-content:space-between;gap:var(--space-3);align-items:flex-start;margin-bottom:var(--space-4)}
+.widget-next{grid-column:span 7}.widget-activity{grid-column:span 5}.widget-money{grid-column:span 5}.widget-establishments{grid-column:span 3}.widget-quick{grid-column:span 4}
+.widget-amount{display:block;font-size:2rem;letter-spacing:-.04em;color:var(--color-brand-800);margin-top:.2rem}
+.widget-count{display:block;font-size:2.3rem;letter-spacing:-.05em;color:var(--color-brand-800)}
+.widget-link{border:0;background:none;padding:.35rem 0;color:var(--color-brand-600);font-weight:800;font-size:.8rem;cursor:pointer;text-align:left}
+.widget-link:hover{color:var(--color-brand-800)}
+.activity-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+.activity-metrics>div{padding:var(--space-4);border-radius:var(--radius-lg);background:var(--surface-soft);border:1px solid var(--border-default)}
+.activity-metrics strong,.activity-metrics span{display:block}.activity-metrics strong{font-size:1.35rem;color:var(--color-brand-800)}.activity-metrics span{margin-top:.25rem;color:var(--text-secondary);font-size:.72rem;line-height:1.35}
+.widget-quick{min-height:auto}.widget-quick button:last-child{padding-bottom:0}.widget-quick>div:first-child{margin-bottom:.35rem}
+
+@media(max-width:900px){.widget-next,.widget-activity,.widget-money,.widget-establishments,.widget-quick{grid-column:span 6}.widget-customizer{grid-template-columns:1fr}.widget-toggles{justify-content:flex-start}}
+@media(max-width:650px){.dashboard-hero-actions{width:100%;justify-content:stretch}.dashboard-hero-actions .btn{flex:1 1 150px}.widget-grid{grid-template-columns:1fr}.widget-next,.widget-activity,.widget-money,.widget-establishments,.widget-quick{grid-column:auto}.dashboard-widget{min-height:auto;padding:var(--space-4)}.activity-metrics{grid-template-columns:1fr 1fr 1fr;gap:var(--space-2)}.activity-metrics>div{padding:var(--space-3)}.widget-customizer{padding:var(--space-4)}}
+@media(max-width:430px){.activity-metrics{grid-template-columns:1fr}.widget-toggles{display:grid;grid-template-columns:1fr}.widget-toggles label{border-radius:var(--radius-md)}}
