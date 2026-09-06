@@ -1,5 +1,34 @@
-/* Final mobile field alignment layer. Loaded last so Safari-specific controls match the rest of the UI. */
+/* Final mobile form layer. Loaded last so Safari controls stay readable, aligned and do not trigger input zoom. */
 @media (max-width:650px){
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) input,
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) select,
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) textarea{
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:48px!important;
+    margin:0!important;
+    padding:.72rem .78rem!important;
+    font-family:inherit!important;
+    font-size:16px!important;
+    font-weight:650!important;
+    line-height:1.25!important;
+    letter-spacing:-.01em!important;
+  }
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) select{
+    padding-right:2.25rem!important;
+  }
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) label{
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  :where(.mr-form,.account-view,.indemnities-embedded,.distance-calculator,.auth-card) small{
+    overflow-wrap:anywhere;
+  }
+  .mr-form{min-width:0!important;overflow:visible!important}
+  .dashboard-panel,.account-profile-card,.account-view section{min-width:0!important}
+
   .indemnity-list .table-header{width:100%;}
   .indemnity-list .table-tools{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:.55rem!important;width:100%!important;}
   .indemnity-list .filter-box{width:100%!important;max-width:100%!important;min-width:0!important;flex:none!important;}
