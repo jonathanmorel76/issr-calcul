@@ -1,16 +1,20 @@
 'use client'
 
 import { useEffect } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const VIEW_LABELS:Record<string,string>={dashboard:'Tableau de bord',establishments:'Mes établissements',missions:'Mes missions',indemnities:'Mes indemnités'}
 
 export default function DashboardViewNavigation(){
  const pathname=usePathname()
+ const router=useRouter()
  useEffect(()=>{
   if(pathname!=='/dashboard')return
   let queryApplied=false
   let scheduled=false
+
+  router.prefetch('/dashboard/bilans')
+  router.prefetch('/dashboard/documents')
 
   function ensureRouteTab(nav:HTMLElement,label:string,href:string){
    const native=Array.from(nav.querySelectorAll<HTMLButtonElement>('button')).find(button=>button.textContent?.trim()===label)
@@ -26,6 +30,10 @@ export default function DashboardViewNavigation(){
     link.className='mr-persistent-route-tab'
     link.textContent=label
     link.href=href
+    link.addEventListener('click',event=>{
+     event.preventDefault()
+     router.push(href)
+    })
     nav.appendChild(link)
    }else if(link.getAttribute('href')!==href){
     link.href=href
@@ -65,6 +73,6 @@ export default function DashboardViewNavigation(){
   observer.observe(document.body,{childList:true,subtree:true})
   window.addEventListener('popstate',scheduleSetup)
   return()=>{observer.disconnect();window.removeEventListener('popstate',scheduleSetup)}
- },[pathname])
+ },[pathname,router])
  return null
 }
