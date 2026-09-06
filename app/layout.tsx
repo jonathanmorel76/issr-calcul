@@ -4,6 +4,7 @@ import AppUtilityMenu from '@/components/app-utility-menu'
 import RateRangeDisplayFix from '@/components/rate-range-display-fix'
 import WidgetCustomizerSync from '@/components/widget-customizer-sync'
 import GeolocatedAutocomplete from '@/components/geolocated-autocomplete'
+import MissionWeekdayPrefilter from '@/components/mission-weekday-prefilter'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
@@ -15,6 +16,7 @@ import './icon-overrides.css'
 import './mobile-field-fixes.css'
 import './profile-mobile-fixes.css'
 import './autocomplete.css'
+import './mission-weekday-prefilter.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
@@ -24,5 +26,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/>{children}</body></html>
 }
