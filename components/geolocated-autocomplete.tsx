@@ -6,11 +6,20 @@ type Geo={lat:number;lon:number}|null
 type School={id:string;name:string;type:string;status:string;address:string;city:string;postalCode:string;distanceKm:number|null}
 type Address={id:string;label:string;name:string;city:string;postcode:string;context:string}
 
-function setReactInputValue(input:HTMLInputElement,value:string){
+function setReactInputValue(input:HTMLInputElement,value:string,{suppressAutocomplete=false}:{suppressAutocomplete?:boolean}={}){
+  if(suppressAutocomplete)input.dataset.geoSuppressOnce='1'
   const setter=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value')?.set
   setter?.call(input,value)
   input.dispatchEvent(new Event('input',{bubbles:true}))
   input.dispatchEvent(new Event('change',{bubbles:true}))
+}
+
+function consumeSuppression(input:HTMLInputElement){
+  if(input.dataset.geoSuppressOnce==='1'){
+    delete input.dataset.geoSuppressOnce
+    return true
+  }
+  return false
 }
 
 function labelText(input:HTMLInputElement){
@@ -29,7 +38,6 @@ function ensureHost(input:HTMLInputElement){
 }
 
 function closeHost(host:HTMLElement){host.innerHTML='';host.classList.remove('open')}
-
 function showLoading(host:HTMLElement){host.innerHTML='<div class="geo-autocomplete-state">Recherche…</div>';host.classList.add('open')}
 function showEmpty(host:HTMLElement){host.innerHTML='<div class="geo-autocomplete-state">Aucune suggestion trouvée</div>';host.classList.add('open')}
 
@@ -76,22 +84,31 @@ export default function GeolocatedAutocomplete(){
 
     const cleanups=new Map<HTMLInputElement,()=>void>()
 
-    function bindSchool(input:HTMLInputElement){
+    function bindSchool(input:HTMLInputElement,mode:'name'|'attachment'='name'){
       if(input.dataset.geoSchoolBound)return
       input.dataset.geoSchoolBound='1';input.autocomplete='off'
       const host=ensureHost(input)
       let timer:number|undefined,ctrl:AbortController|null=null
       const onInput=()=>{
+        if(consumeSuppression(input)){closeHost(host);return}
         window.clearTimeout(timer);ctrl?.abort();const q=input.value.trim()
         if(q.length<2){closeHost(host);return}
         timer=window.setTimeout(async()=>{
           ctrl=new AbortController();showLoading(host)
           const params=new URLSearchParams({q});if(geo){params.set('lat',String(geo.lat));params.set('lon',String(geo.lon))}
           try{const res=await fetch(`/api/schools/search?${params}`,{signal:ctrl.signal});const json=await res.json();if(destroyed)return;renderSchools(host,json.results??[],school=>{
-            setReactInputValue(input,school.name)
-            const form=input.closest('.mr-form')
-            const addressInput=form?Array.from(form.querySelectorAll<HTMLInputElement>('input')).find(i=>labelText(i)==='Adresse'):null
-            if(addressInput&&school.address)setReactInputValue(addressInput,school.address)
+            if(mode==='attachment'){
+              setReactInputValue(input,school.address||school.name,{suppressAutocomplete:true})
+            }else{
+              setReactInputValue(input,school.name,{suppressAutocomplete:true})
+              const form=input.closest('.mr-form')
+              const addressInput=form?Array.from(form.querySelectorAll<HTMLInputElement>('input')).find(i=>labelText(i)==='Adresse'):null
+              if(addressInput&&school.address){
+                const addressHost=addressInput.parentElement?.querySelector<HTMLElement>(':scope > .geo-autocomplete-host')
+                if(addressHost)closeHost(addressHost)
+                setReactInputValue(addressInput,school.address,{suppressAutocomplete:true})
+              }
+            }
             closeHost(host)
           })}catch(e){if((e as Error).name!=='AbortError')closeHost(host)}
         },220)
@@ -108,12 +125,13 @@ export default function GeolocatedAutocomplete(){
       const host=ensureHost(input)
       let timer:number|undefined,ctrl:AbortController|null=null
       const onInput=()=>{
+        if(consumeSuppression(input)){closeHost(host);return}
         window.clearTimeout(timer);ctrl?.abort();const q=input.value.trim()
         if(q.length<3){closeHost(host);return}
         timer=window.setTimeout(async()=>{
           ctrl=new AbortController();showLoading(host)
           const params=new URLSearchParams({q});if(geo){params.set('lat',String(geo.lat));params.set('lon',String(geo.lon))}
-          try{const res=await fetch(`/api/addresses/search?${params}`,{signal:ctrl.signal});const json=await res.json();if(destroyed)return;renderAddresses(host,json.results??[],address=>{setReactInputValue(input,address.label);closeHost(host)})}catch(e){if((e as Error).name!=='AbortError')closeHost(host)}
+          try{const res=await fetch(`/api/addresses/search?${params}`,{signal:ctrl.signal});const json=await res.json();if(destroyed)return;renderAddresses(host,json.results??[],address=>{setReactInputValue(input,address.label,{suppressAutocomplete:true});closeHost(host)})}catch(e){if((e as Error).name!=='AbortError')closeHost(host)}
         },220)
       }
       const onFocus=()=>{if(input.value.trim().length>=3)onInput()}
@@ -126,8 +144,9 @@ export default function GeolocatedAutocomplete(){
       const inputs=Array.from(document.querySelectorAll<HTMLInputElement>('.mr-form input'))
       for(const input of inputs){
         const label=labelText(input)
-        if(label==='Nom')bindSchool(input)
-        if(label==='Adresse'||label==='Établissement de rattachement administratif')bindAddress(input)
+        if(label==='Nom')bindSchool(input,'name')
+        if(label==='Établissement de rattachement administratif')bindSchool(input,'attachment')
+        if(label==='Adresse')bindAddress(input)
       }
     }
 
