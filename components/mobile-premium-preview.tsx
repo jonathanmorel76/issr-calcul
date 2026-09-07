@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 
 type Mode='free'|'premium'
 type ViewKey='dashboard'|'establishments'|'missions'|'indemnities'|'reports'|'documents'
-
 type Copy={title:string;free:string;premium:string;benefits:string[]}
 
 const COPY:Record<ViewKey,Copy>={
@@ -32,10 +31,12 @@ export default function MobilePremiumPreview(){
  const [mode,setMode]=useState<Mode>('free')
  const [view,setView]=useState<ViewKey>('dashboard')
  const [open,setOpen]=useState(false)
+ const visible=pathname.startsWith('/dashboard')
 
  useEffect(()=>{try{const saved=window.localStorage.getItem('mr-beta-product-mode');if(saved==='premium')setMode('premium')}catch{}},[])
  useEffect(()=>{try{window.localStorage.setItem('mr-beta-product-mode',mode)}catch{};document.documentElement.dataset.productMode=mode},[mode])
  useEffect(()=>{
+  if(!visible)return
   let scheduled=false
   const update=()=>{scheduled=false;setView(detectView(pathname))}
   const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(update)}
@@ -43,26 +44,13 @@ export default function MobilePremiumPreview(){
   const observer=new MutationObserver(schedule)
   observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']})
   return()=>observer.disconnect()
- },[pathname])
+ },[pathname,visible])
 
  const copy=useMemo(()=>COPY[view],[view])
+ if(!visible)return null
  return <>
-  <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label="Changer le mode de démonstration">
-   <span className="beta-mode-dot"/><span>Beta · {mode==='premium'?'Premium':'Gratuit'}</span>
-  </button>
-  <aside className={`mobile-premium-context ${mode}`} aria-label="Aperçu de l’offre">
-   <div><span className="mobile-premium-kicker">{mode==='premium'?'PREMIUM ACTIF':'MON REMPLACEMENT PREMIUM'}</span><strong>{copy.title}</strong><p>{mode==='premium'?copy.premium:copy.free}</p></div>
-   <button type="button" onClick={()=>setOpen(true)}>{mode==='premium'?'Voir les avantages':'Découvrir Premium'}</button>
-  </aside>
-  {open&&<div className="beta-mode-backdrop" role="dialog" aria-modal="true" aria-label="Aperçu Gratuit et Premium" onClick={()=>setOpen(false)}>
-   <section className="beta-mode-sheet" onClick={e=>e.stopPropagation()}>
-    <div className="beta-mode-sheet-handle"/>
-    <header><div><span>MODE DE DÉMONSTRATION</span><h2>Tester Gratuit / Premium</h2></div><button type="button" onClick={()=>setOpen(false)} aria-label="Fermer">×</button></header>
-    <p>Ce sélecteur sert uniquement à valider l’expérience mobile avant l’intégration du paiement.</p>
-    <div className="beta-plan-switch"><button className={mode==='free'?'active':''} onClick={()=>setMode('free')}><strong>Gratuit</strong><small>Organiser + calculer</small></button><button className={mode==='premium'?'active':''} onClick={()=>setMode('premium')}><strong>Premium</strong><small>3,99 € / mois</small></button></div>
-    <div className="beta-plan-card"><span>{copy.title}</span><strong>{mode==='premium'?copy.premium:copy.free}</strong>{mode==='premium'&&<ul>{copy.benefits.map(x=><li key={x}>{x}</li>)}</ul>}</div>
-    <div className="beta-pricing"><div><strong>3,99 €</strong><small>par mois</small></div><div><strong>29,99 €</strong><small>par an · 14 jours d’essai</small></div></div>
-   </section>
-  </div>}
+  <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label="Changer le mode de démonstration"><span className="beta-mode-dot"/><span>Beta · {mode==='premium'?'Premium':'Gratuit'}</span></button>
+  <aside className={`mobile-premium-context ${mode}`} aria-label="Aperçu de l’offre"><div><span className="mobile-premium-kicker">{mode==='premium'?'PREMIUM ACTIF':'MON REMPLACEMENT PREMIUM'}</span><strong>{copy.title}</strong><p>{mode==='premium'?copy.premium:copy.free}</p></div><button type="button" onClick={()=>setOpen(true)}>{mode==='premium'?'Voir les avantages':'Découvrir Premium'}</button></aside>
+  {open&&<div className="beta-mode-backdrop" role="dialog" aria-modal="true" aria-label="Aperçu Gratuit et Premium" onClick={()=>setOpen(false)}><section className="beta-mode-sheet" onClick={e=>e.stopPropagation()}><div className="beta-mode-sheet-handle"/><header><div><span>MODE DE DÉMONSTRATION</span><h2>Tester Gratuit / Premium</h2></div><button type="button" onClick={()=>setOpen(false)} aria-label="Fermer">×</button></header><p>Ce sélecteur sert uniquement à valider l’expérience mobile avant l’intégration du paiement.</p><div className="beta-plan-switch"><button className={mode==='free'?'active':''} onClick={()=>setMode('free')}><strong>Gratuit</strong><small>Organiser + calculer</small></button><button className={mode==='premium'?'active':''} onClick={()=>setMode('premium')}><strong>Premium</strong><small>3,99 € / mois</small></button></div><div className="beta-plan-card"><span>{copy.title}</span><strong>{mode==='premium'?copy.premium:copy.free}</strong>{mode==='premium'&&<ul>{copy.benefits.map(x=><li key={x}>{x}</li>)}</ul>}</div><div className="beta-pricing"><div><strong>3,99 €</strong><small>par mois</small></div><div><strong>29,99 €</strong><small>par an · 14 jours d’essai</small></div></div></section></div>}
  </>
 }
