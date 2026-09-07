@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Manrope } from 'next/font/google'
 import AppUtilityMenu from '@/components/app-utility-menu'
 import RateRangeDisplayFix from '@/components/rate-range-display-fix'
@@ -24,12 +24,29 @@ import './mission-weekday-prefilter.css'
 import './indemnity-period-fix.css'
 import './secondary-views.css'
 import './hero-school-patterns.css'
+import './mobile-beta.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#103e43',
+}
+
 export const metadata: Metadata = {
-  title: 'Mon Remplacement — Assistant des enseignants remplaçants',
+  title: 'Mon Remplacement Beta — Assistant des enseignants remplaçants',
   description: 'Mon Remplacement centralise les missions, établissements, déplacements, indemnités ISSR et outils utiles aux enseignants remplaçants.',
+  applicationName: 'Mon Remplacement Beta',
+  appleWebApp: {
+    capable: true,
+    title: 'Mon Remplacement Beta',
+    statusBarStyle: 'black-translucent',
+  },
+  formatDetection: {
+    telephone: false,
+  },
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
