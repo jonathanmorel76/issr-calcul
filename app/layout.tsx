@@ -27,6 +27,7 @@ import './indemnity-period-fix.css'
 import './secondary-views.css'
 import './hero-school-patterns.css'
 import './mobile-beta.css'
+import './mobile-premium.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
