@@ -39,7 +39,10 @@ export default function PremiumOperationalInsightsBeta(){
    const main=document.querySelector('.dashboard-main') as HTMLElement|null
    if(!main)return
    let host=main.querySelector<HTMLElement>('#beta-operational-insights')
-   if(!host){host=document.createElement('div');host.id='beta-operational-insights';main.prepend(host)}
+   if(!host){host=document.createElement('div');host.id='beta-operational-insights'}
+   const primaryPanel=main.querySelector('.dashboard-panel')
+   if(primaryPanel&&primaryPanel.nextElementSibling!==host)primaryPanel.insertAdjacentElement('afterend',host)
+   if(!host.isConnected)return
    setScope(nextScope);setMount(host)
   }
   const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(sync)}
