@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type Item={key:string;label:string;short:string;href?:string;view?:string;icon:React.ReactNode}
 
@@ -24,13 +24,28 @@ const ITEMS:Item[]=[
  {key:'documents',label:'Mes documents',short:'Docs',href:'/dashboard/documents',icon:icons.documents},
 ]
 
+function keyFromLabel(label?:string|null){return ITEMS.find(item=>item.label===label)?.key??'dashboard'}
+
 export default function MobileAppDock(){
  const pathname=usePathname()
  const router=useRouter()
  const dashboardRoute=pathname==='/dashboard'
- const currentRoute=pathname.includes('/bilans')?'reports':pathname.includes('/documents')?'documents':null
+ const routeKey=pathname.includes('/bilans')?'reports':pathname.includes('/documents')?'documents':null
+ const [activeKey,setActiveKey]=useState(routeKey??'dashboard')
+
+ useEffect(()=>{
+  if(routeKey){setActiveKey(routeKey);return}
+  if(!dashboardRoute)return
+  const sync=()=>setActiveKey(keyFromLabel(document.querySelector('.product-tabs button.active')?.textContent?.trim()))
+  sync()
+  const observer=new MutationObserver(sync)
+  const root=document.querySelector('.product-shell')??document.body
+  observer.observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['class']})
+  return()=>observer.disconnect()
+ },[dashboardRoute,routeKey])
 
  const activateDashboardView=useCallback((view:string,label:string)=>{
+  setActiveKey(view)
   if(!dashboardRoute){router.push(`/dashboard?view=${view}`);return}
   const nav=document.querySelector('.product-tabs')
   const button=Array.from(nav?.querySelectorAll<HTMLButtonElement>('button')??[]).find(x=>x.textContent?.trim()===label)
@@ -40,8 +55,8 @@ export default function MobileAppDock(){
 
  return <nav className="mobile-app-dock" aria-label="Navigation principale mobile">
   {ITEMS.map(item=>{
-   const active=currentRoute===item.key || (dashboardRoute&&currentRoute==null&&item.key==='dashboard'&&typeof window!=='undefined'&&document.querySelector('.product-tabs button.active')?.textContent?.trim()==='Tableau de bord') || (dashboardRoute&&currentRoute==null&&item.view&&typeof window!=='undefined'&&document.querySelector('.product-tabs button.active')?.textContent?.trim()===item.label)
-   return <button key={item.key} type="button" className={active?'active':''} aria-label={item.label} aria-current={active?'page':undefined} onClick={()=>item.href?router.push(item.href):activateDashboardView(item.view!,item.label)}>
+   const active=activeKey===item.key
+   return <button key={item.key} type="button" className={active?'active':''} aria-label={item.label} aria-current={active?'page':undefined} onClick={()=>item.href?(setActiveKey(item.key),router.push(item.href)):activateDashboardView(item.view!,item.label)}>
     <span className="mobile-app-dock-icon">{item.icon}</span><span>{item.short}</span>
    </button>
   })}
