@@ -3,9 +3,11 @@
   .product-hero{padding-top:max(1.2rem,env(safe-area-inset-top));}
 }
 
+.mobile-app-dock{display:none}
+
 @media(max-width:650px){
   html{background:var(--color-background);overscroll-behavior-y:none}
-  body{min-height:100dvh;-webkit-tap-highlight-color:transparent}
+  body{min-height:100dvh;-webkit-tap-highlight-color:transparent;padding-bottom:calc(68px + env(safe-area-inset-bottom))}
   .product-shell{min-height:100dvh;background:var(--color-background)}
 
   .product-hero{position:relative;padding-left:1rem;padding-right:1rem;padding-bottom:1.15rem;border-radius:0 0 24px 24px;box-shadow:0 10px 30px rgba(16,62,67,.12)}
@@ -44,9 +46,21 @@
   .document-list-head{margin-bottom:.75rem}
   .document-file-badge{border-radius:12px}
 
-  .auth-page{min-height:100dvh;padding:max(.7rem,env(safe-area-inset-top)) .7rem max(.7rem,env(safe-area-inset-bottom))}
+  .mobile-app-dock{position:fixed;left:0;right:0;bottom:0;z-index:120;display:grid;grid-template-columns:repeat(6,1fr);padding:.38rem .28rem max(.38rem,env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--border-default);box-shadow:0 -8px 28px rgba(16,62,67,.09);backdrop-filter:saturate(160%) blur(18px);-webkit-backdrop-filter:saturate(160%) blur(18px)}
+  .mobile-app-dock button{appearance:none;border:0;background:transparent;color:var(--text-secondary);min-width:0;min-height:52px;padding:.25rem .08rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;border-radius:12px;font-size:.58rem;font-weight:800;letter-spacing:-.02em}
+  .mobile-app-dock button.active{color:var(--color-brand-800);background:var(--color-accent-green-soft)}
+  .mobile-app-dock-icon{width:22px;height:22px;display:grid;place-items:center}
+  .mobile-app-dock-icon svg{width:22px;height:22px;display:block}
+  .mobile-app-dock button:nth-child(4).active{background:var(--color-accent-orange-soft)}
+
+  .auth-page{min-height:100dvh;padding:max(.7rem,env(safe-area-inset-top)) .7rem max(calc(74px + env(safe-area-inset-bottom)),.7rem)}
   .auth-board{border-radius:22px}
   .auth-card{border-radius:20px}
+}
+
+@media(max-width:380px){
+  .mobile-app-dock button{font-size:.54rem}
+  .mobile-app-dock-icon,.mobile-app-dock-icon svg{width:20px;height:20px}
 }
 
 @media(display-mode:standalone) and (max-width:650px){
