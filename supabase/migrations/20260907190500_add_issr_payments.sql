@@ -12,6 +12,7 @@ create table if not exists public.issr_payments (
 
 create index if not exists issr_payments_user_id_idx on public.issr_payments(user_id);
 create index if not exists issr_payments_user_month_idx on public.issr_payments(user_id, payment_month desc);
+create index if not exists issr_payments_source_document_id_idx on public.issr_payments(source_document_id);
 
 alter table public.issr_payments enable row level security;
 revoke all on table public.issr_payments from anon, authenticated;
