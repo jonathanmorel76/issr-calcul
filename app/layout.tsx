@@ -10,6 +10,7 @@ import IndemnityMonthFilterPosition from '@/components/indemnity-month-filter-po
 import DashboardViewNavigation from '@/components/dashboard-view-navigation'
 import HeroArtworkHydrator from '@/components/hero-artwork-hydrator'
 import MobileAppDock from '@/components/mobile-app-dock'
+import MobilePremiumPreview from '@/components/mobile-premium-preview'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
@@ -51,5 +52,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/>{children}</body></html>
 }
