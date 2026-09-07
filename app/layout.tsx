@@ -13,6 +13,7 @@ import MobileAppDock from '@/components/mobile-app-dock'
 import MobilePremiumPreview from '@/components/mobile-premium-preview'
 import IndemnityReconciliationBeta from '@/components/indemnity-reconciliation-beta'
 import PremiumPaymentOverviewBeta from '@/components/premium-payment-overview-beta'
+import PremiumOperationalInsightsBeta from '@/components/premium-operational-insights-beta'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
@@ -32,6 +33,7 @@ import './mobile-beta.css'
 import './mobile-premium.css'
 import './indemnity-reconciliation-beta.css'
 import './premium-payment-overview-beta.css'
+import './premium-operational-insights-beta.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
@@ -57,5 +59,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><IndemnityReconciliationBeta/><PremiumPaymentOverviewBeta/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><IndemnityReconciliationBeta/><PremiumPaymentOverviewBeta/><PremiumOperationalInsightsBeta/>{children}</body></html>
 }
