@@ -4,16 +4,17 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePathname } from 'next/navigation'
 
 type Mode='free'|'premium'
+type Billing='monthly'|'annual'
 type ViewKey='dashboard'|'establishments'|'missions'|'indemnities'|'reports'|'documents'
 type Copy={title:string;free:string;premium:string;benefits:string[]}
 
 const COPY:Record<ViewKey,Copy>={
- dashboard:{title:'Tableau de bord enrichi',free:'Le suivi essentiel reste gratuit : mission en cours, météo et estimation ISSR du mois.',premium:'Les indicateurs avancés et alertes de vérification sont activés.',benefits:['Alertes d’anomalies','Évolution mensuelle','Synthèse attendu / versé']},
- establishments:{title:'Analyse par établissement',free:'Créer, modifier et retrouver vos établissements reste gratuit.',premium:'Les statistiques détaillées par établissement sont activées.',benefits:['Jours effectués','Kilomètres cumulés','ISSR estimées par lieu']},
- missions:{title:'Contrôles avancés des missions',free:'La création des missions et tout l’historique restent gratuits.',premium:'Les contrôles automatiques de cohérence sont activés.',benefits:['Chevauchements','Journées inhabituelles','Situations à vérifier']},
- indemnities:{title:'Vérifier ce qui a été versé',free:'Le calcul de ce que vous devriez recevoir reste gratuit.',premium:'Le rapprochement entre estimation et versement réel est activé.',benefits:['Montant réellement reçu','Attendu vs versé','Anomalies de paiement']},
- reports:{title:'Bilans complets',free:'Un aperçu du mois courant reste accessible gratuitement.',premium:'Les bilans complets et les exports sont activés.',benefits:['Année scolaire complète','Analyses et classements','Exports PDF et Excel']},
- documents:{title:'Documents avancés',free:'Vous pouvez conserver jusqu’à 5 documents essentiels dans votre espace.',premium:'L’archivage enrichi et les associations avancées sont activés.',benefits:['Documents étendus','Association aux missions','Préparation à la vérification automatique']},
+ dashboard:{title:'Votre suivi, sans zone d’ombre',free:'Mission en cours, météo et estimation ISSR restent accessibles gratuitement.',premium:'Ajoutez les alertes, tendances et contrôles de versement à votre tableau de bord.',benefits:['Alertes et points à vérifier','Évolution de vos indemnités','Synthèse attendu / versé']},
+ establishments:{title:'Comprendre vos établissements',free:'Créer, modifier et retrouver vos établissements reste gratuit.',premium:'Identifiez les écoles où vous intervenez le plus et ce qu’elles représentent dans votre activité.',benefits:['Jours effectués par établissement','Kilomètres cumulés','ISSR estimées par lieu']},
+ missions:{title:'Sécuriser le suivi de vos missions',free:'Créer vos missions et conserver votre historique reste gratuit.',premium:'Premium repère automatiquement les situations qui méritent une vérification.',benefits:['Chevauchements de périodes','Informations manquantes','Situations inhabituelles à vérifier']},
+ indemnities:{title:'Vérifier ce qui vous est versé',free:'Le calcul de ce que vous devriez recevoir reste gratuit.',premium:'Comparez vos estimations aux versements réellement reçus et retrouvez rapidement les écarts.',benefits:['Montant réellement reçu','Attendu vs versé','Mois à vérifier']},
+ reports:{title:'Prendre du recul sur votre année',free:'Le mois courant reste consultable gratuitement.',premium:'Accédez à l’année scolaire complète, aux analyses détaillées et aux exports.',benefits:['Année scolaire complète','Analyses et classements','Exports PDF et Excel']},
+ documents:{title:'Centraliser vos justificatifs',free:'Conservez jusqu’à 5 documents essentiels dans votre espace.',premium:'Classez davantage de documents et reliez-les directement à votre activité.',benefits:['Archivage étendu','Association aux missions','Préparation à la vérification automatique']},
 }
 
 function detectView(pathname:string):ViewKey{
@@ -29,6 +30,7 @@ function detectView(pathname:string):ViewKey{
 export default function MobilePremiumPreview(){
  const pathname=usePathname()
  const [mode,setMode]=useState<Mode>('free')
+ const [billing,setBilling]=useState<Billing>('annual')
  const [view,setView]=useState<ViewKey>('dashboard')
  const [open,setOpen]=useState(false)
  const visible=pathname.startsWith('/dashboard')
@@ -52,9 +54,32 @@ export default function MobilePremiumPreview(){
 
  const copy=useMemo(()=>COPY[view],[view])
  if(!visible)return null
+ const premiumActive=mode==='premium'
+ const activate=()=>{setMode('premium');setOpen(false)}
+
  return <>
-  <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label="Changer le mode de démonstration"><span className="beta-mode-dot"/><span>Beta · {mode==='premium'?'Premium':'Gratuit'}</span></button>
-  <aside className={`mobile-premium-context ${mode}`} aria-label="Aperçu de l’offre"><div><span className="mobile-premium-kicker">{mode==='premium'?'PREMIUM ACTIF':'MON REMPLACEMENT PREMIUM'}</span><strong>{copy.title}</strong><p>{mode==='premium'?copy.premium:copy.free}</p></div><button type="button" onClick={()=>setOpen(true)}>{mode==='premium'?'Voir les avantages':'Découvrir Premium'}</button></aside>
-  {open&&<div className="beta-mode-backdrop" role="dialog" aria-modal="true" aria-label="Aperçu Gratuit et Premium" onClick={()=>setOpen(false)}><section className="beta-mode-sheet" onClick={e=>e.stopPropagation()}><div className="beta-mode-sheet-handle"/><header><div><span>MODE DE DÉMONSTRATION</span><h2>Tester Gratuit / Premium</h2></div><button type="button" onClick={()=>setOpen(false)} aria-label="Fermer">×</button></header><p>Ce sélecteur sert uniquement à valider l’expérience mobile avant l’intégration du paiement.</p><div className="beta-plan-switch"><button className={mode==='free'?'active':''} onClick={()=>setMode('free')}><strong>Gratuit</strong><small>Organiser + calculer</small></button><button className={mode==='premium'?'active':''} onClick={()=>setMode('premium')}><strong>Premium</strong><small>3,99 € / mois</small></button></div><div className="beta-plan-card"><span>{copy.title}</span><strong>{mode==='premium'?copy.premium:copy.free}</strong>{mode==='premium'&&<ul>{copy.benefits.map(x=><li key={x}>{x}</li>)}</ul>}</div><div className="beta-pricing"><div><strong>3,99 €</strong><small>par mois</small></div><div><strong>29,99 €</strong><small>par an · 14 jours d’essai</small></div></div></section></div>}
+  <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label="Ouvrir mon offre"><span className="beta-mode-dot"/><span>{premiumActive?'Premium':'Gratuit'}</span></button>
+  {!premiumActive&&<aside className="mobile-premium-context free" aria-label="Découvrir Premium"><div><span className="mobile-premium-kicker">PREMIUM</span><strong>{copy.title}</strong><p>{copy.premium}</p></div><button type="button" onClick={()=>setOpen(true)}>Découvrir</button></aside>}
+  {open&&<div className="beta-mode-backdrop" role="dialog" aria-modal="true" aria-label="Mon Remplacement Premium" onClick={()=>setOpen(false)}>
+   <section className="beta-mode-sheet" onClick={e=>e.stopPropagation()}>
+    <div className="beta-mode-sheet-handle"/>
+    <header><div><span>MON REMPLACEMENT PREMIUM</span><h2>{premiumActive?'Votre offre Premium':'14 jours pour tout essayer'}</h2></div><button type="button" onClick={()=>setOpen(false)} aria-label="Fermer">×</button></header>
+    <p className="beta-plan-intro">{premiumActive?'Toutes les fonctions Premium sont activées dans cette préversion.':'Gardez le calcul et l’organisation essentiels gratuitement. Passez à Premium pour analyser, vérifier et automatiser votre suivi.'}</p>
+
+    {!premiumActive&&<>
+     <div className="beta-benefit-focus"><strong>{copy.title}</strong><p>{copy.premium}</p><ul>{copy.benefits.map(x=><li key={x}><span aria-hidden="true">✓</span>{x}</li>)}</ul></div>
+     <div className="beta-billing-choice" role="radiogroup" aria-label="Choisir la formule">
+      <button type="button" className={billing==='annual'?'active':''} onClick={()=>setBilling('annual')} role="radio" aria-checked={billing==='annual'}><span className="beta-save-chip">−37 %</span><strong>Annuel</strong><b>29,99 € <small>/ an</small></b><em>soit 2,50 € / mois</em></button>
+      <button type="button" className={billing==='monthly'?'active':''} onClick={()=>setBilling('monthly')} role="radio" aria-checked={billing==='monthly'}><strong>Mensuel</strong><b>3,99 € <small>/ mois</small></b><em>sans engagement annuel</em></button>
+     </div>
+     <button type="button" className="beta-subscribe-cta" onClick={activate}>Démarrer mes 14 jours gratuits</button>
+     <p className="beta-trial-note">Aucun paiement n’est effectué dans cette Beta. Le bouton active simplement l’expérience Premium de démonstration.</p>
+    </>}
+
+    {premiumActive&&<div className="beta-premium-active-card"><span className="beta-premium-active-icon" aria-hidden="true">✓</span><div><strong>Premium est actif</strong><p>Les analyses, contrôles, exports et rapprochements attendu / versé sont disponibles.</p></div></div>}
+
+    <div className="beta-plan-footer"><button type="button" onClick={()=>setMode(premiumActive?'free':'premium')}>{premiumActive?'Revenir au mode Gratuit':'Activer Premium pour la Beta'}</button><span>Simulation de préproduction</span></div>
+   </section>
+  </div>}
  </>
 }
