@@ -17,9 +17,12 @@ const icons={
   <path {...outline} d="M8.2 14.5h2.4M17.4 14.5h2.4"/>
  </svg>,
  establishments:<svg viewBox="0 0 28 28" aria-hidden="true">
-  <path {...soft} d="M5 10.5 14 5l9 5.5v13H5z"/>
-  <path {...outline} d="M4.2 11 14 5l9.8 6M6 10.3v13.2h16V10.3M11 23.5v-6.2h6v6.2M9 13.1h2M17 13.1h2"/>
-  <path {...mid} d="M19.6 5.2c0-2 1.6-3.6 3.6-3.6s3.6 1.6 3.6 3.6c0 2.8-3.6 6.1-3.6 6.1s-3.6-3.3-3.6-6.1Z" transform="translate(-4.1 1.7) scale(.72)"/>
+  <path {...soft} d="M3.7 11.3h5.2v12.1H3.7zM19.1 11.3h5.2v12.1h-5.2zM8.9 8.4 14 5.2l5.1 3.2v15H8.9z"/>
+  <path {...mid} d="M11.6 16.5h4.8v6.9h-4.8z"/>
+  <path {...outline} d="M3.7 23.4V11.3h5.2M24.3 23.4V11.3h-5.2M8.9 23.4V8.4L14 5.2l5.1 3.2v15M2.8 23.4h22.4M11.6 23.4v-6.9h4.8v6.9"/>
+  <path {...outline} d="M5.6 14.2h1.5M5.6 17.5h1.5M20.9 14.2h1.5M20.9 17.5h1.5M11.2 11.2h1.5M15.3 11.2h1.5"/>
+  <circle cx="14" cy="7.9" r="1.05" {...outline}/>
+  <path {...outline} d="M14 5.2V2.8h4.1v2.1H14"/>
  </svg>,
  missions:<svg viewBox="0 0 28 28" aria-hidden="true">
   <rect x="4.5" y="6.2" width="19" height="17.1" rx="3.5" {...soft}/>
