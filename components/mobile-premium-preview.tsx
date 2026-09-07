@@ -13,7 +13,7 @@ const COPY:Record<ViewKey,Copy>={
  missions:{title:'Contrôles avancés des missions',free:'La création des missions et tout l’historique restent gratuits.',premium:'Les contrôles automatiques de cohérence sont activés.',benefits:['Chevauchements','Journées inhabituelles','Situations à vérifier']},
  indemnities:{title:'Vérifier ce qui a été versé',free:'Le calcul de ce que vous devriez recevoir reste gratuit.',premium:'Le rapprochement entre estimation et versement réel est activé.',benefits:['Montant réellement reçu','Attendu vs versé','Anomalies de paiement']},
  reports:{title:'Bilans complets',free:'Un aperçu du mois courant reste accessible gratuitement.',premium:'Les bilans complets et les exports sont activés.',benefits:['Année scolaire complète','Analyses et classements','Exports PDF et Excel']},
- documents:{title:'Documents avancés',free:'Vous pouvez conserver vos documents essentiels dans votre espace.',premium:'L’archivage enrichi et les associations avancées sont activés.',benefits:['Classement étendu','Association aux missions','Préparation à la vérification automatique']},
+ documents:{title:'Documents avancés',free:'Vous pouvez conserver jusqu’à 5 documents essentiels dans votre espace.',premium:'L’archivage enrichi et les associations avancées sont activés.',benefits:['Documents étendus','Association aux missions','Préparation à la vérification automatique']},
 }
 
 function detectView(pathname:string):ViewKey{
@@ -34,7 +34,11 @@ export default function MobilePremiumPreview(){
  const visible=pathname.startsWith('/dashboard')
 
  useEffect(()=>{try{const saved=window.localStorage.getItem('mr-beta-product-mode');if(saved==='premium')setMode('premium')}catch{}},[])
- useEffect(()=>{try{window.localStorage.setItem('mr-beta-product-mode',mode)}catch{};document.documentElement.dataset.productMode=mode},[mode])
+ useEffect(()=>{
+  try{window.localStorage.setItem('mr-beta-product-mode',mode)}catch{}
+  document.documentElement.dataset.productMode=mode
+  window.dispatchEvent(new CustomEvent('mr-beta-product-mode',{detail:{mode}}))
+ },[mode])
  useEffect(()=>{
   if(!visible)return
   let scheduled=false
