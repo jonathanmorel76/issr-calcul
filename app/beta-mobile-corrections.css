@@ -1,0 +1,130 @@
+.document-file-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 58px;
+  padding: .65rem .75rem;
+  overflow: hidden;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
+  color: var(--color-brand-800);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.document-file-picker:hover,
+.document-file-picker:focus-within {
+  border-color: var(--color-brand-600);
+  background: #fff;
+}
+
+.document-file-picker > input {
+  position: absolute !important;
+  z-index: 1;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.document-file-picker > input:disabled {
+  cursor: not-allowed;
+}
+
+.document-file-picker > span {
+  display: flex;
+  flex-direction: column;
+  gap: .12rem;
+  min-width: 0;
+}
+
+.document-file-picker > span strong,
+.document-file-picker > span small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-file-picker > span small {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.document-file-picker > b {
+  flex: none;
+  padding: .42rem .62rem;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: #fff;
+  font-size: .72rem;
+}
+
+.report-loading-skeleton {
+  min-height: 300px;
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  font-weight: 800;
+  background: linear-gradient(100deg, var(--surface-card) 25%, var(--surface-soft) 45%, var(--surface-card) 65%);
+  background-size: 220% 100%;
+  animation: report-loading 1.4s ease infinite;
+}
+
+@keyframes report-loading {
+  to { background-position: -220% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .report-loading-skeleton { animation: none; }
+}
+
+@media (max-width: 650px) {
+  .app-burger {
+    left: 12px !important;
+    right: auto !important;
+    width: 44px;
+    height: 44px;
+  }
+
+  .product-hero p { font-size: .82rem; }
+  .product-hero .brand-copy span { font-size: .64rem; }
+  .eyebrow,
+  .product-kicker { font-size: .64rem; }
+  .dashboard-stats span,
+  .indemnity-summary span,
+  .report-kpis span { font-size: .7rem; }
+  .dashboard-stats small,
+  .indemnity-summary small,
+  .report-kpis small,
+  .mr-form label small,
+  .document-form label small,
+  .mr-list article small,
+  .planner-source,
+  .indemnity-period-copy small,
+  .report-period > span,
+  .mobile-entry-meta,
+  .report-months small,
+  .report-ranking small,
+  .document-meta span,
+  .document-meta small { font-size: .68rem; }
+  .mr-form label,
+  .document-form label { font-size: .7rem; }
+  .quick-panel button small { font-size: .7rem; }
+  .document-upload > div:first-child p { font-size: .72rem; }
+  .beta-payment-note,
+  .beta-reconciliation-note { font-size: .65rem !important; }
+  .mobile-app-dock button { font-size: .65rem; }
+  .beta-mode-pill {
+    min-height: 40px;
+    padding: .45rem .68rem;
+    font-size: .7rem;
+  }
+  .document-file-picker { min-height: 62px; }
+  .report-loading-skeleton { min-height: 420px; }
+}

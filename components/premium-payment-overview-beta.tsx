@@ -39,9 +39,9 @@ export default function PremiumPaymentOverviewBeta(){
     if(main&&anchor){let host=main.querySelector<HTMLElement>('#beta-payment-overview');if(!host){host=document.createElement('div');host.id='beta-payment-overview';anchor.insertAdjacentElement('afterend',host)}setScope('reports');setMount(host);return}
    }
    if(pathname==='/dashboard'){
-    const active=document.querySelector('.product-tabs button.active')?.textContent?.trim()??''
-    const dashboardVisible=!active||active==='Tableau de bord'
-    if(dashboardVisible){const main=document.querySelector('.dashboard-main') as HTMLElement|null;const anchor=main?.querySelector('.dashboard-stats') as HTMLElement|null;if(main&&anchor){let host=main.querySelector<HTMLElement>('#beta-payment-overview');if(!host){host=document.createElement('div');host.id='beta-payment-overview';anchor.insertAdjacentElement('afterend',host)}setScope('dashboard');setMount(host);return}}
+   const active=document.querySelector('.product-tabs button.active')?.textContent?.trim()??''
+   const dashboardVisible=!active||active==='Tableau de bord'
+    if(dashboardVisible){const main=document.querySelector('.dashboard-main') as HTMLElement|null;const anchor=main?.querySelector('.widget-grid') as HTMLElement|null;if(main&&anchor){let host=main.querySelector<HTMLElement>('#beta-payment-overview');if(!host){host=document.createElement('div');host.id='beta-payment-overview';anchor.insertAdjacentElement('beforebegin',host)}setScope('dashboard');setMount(host);return}}
    }
    setScope(null);setMount(null);document.querySelector('#beta-payment-overview')?.remove()
   }

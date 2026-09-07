@@ -79,7 +79,7 @@ export default function IssrApp({ userId, embedded=false }: { userId: string; em
       setOrigine('');setDestination('');setManualKm('');setIsRep(false);setIsRepPlus(false);setOriginCoords(null);setDestCoords(null);setOriginSuggestions([]);setDestSuggestions([])
     }catch(e:any){setStatus({text:e.message||'Erreur lors de l’ajout.',type:'error'})}finally{setSaving(false)}
   }
-  async function removeEntry(id:string){ const {error}=await supabase.from('issr_entries').delete().eq('id',id); if(error)setStatus({text:error.message,type:'error'}); else setEntries(v=>v.filter(e=>e.id!==id)) }
+  async function removeEntry(id:string){ if(!window.confirm('Supprimer définitivement cette journée ISSR ?'))return; const {error}=await supabase.from('issr_entries').delete().eq('id',id); if(error)setStatus({text:error.message,type:'error'}); else setEntries(v=>v.filter(e=>e.id!==id)) }
   async function signOut(){await supabase.auth.signOut();window.location.href='/login'}
 
   const filtered=useMemo(()=>selectedMonth?entries.filter(e=>e.travel_date.startsWith(selectedMonth)):entries,[entries,selectedMonth])

@@ -76,19 +76,27 @@ export default function MobileAppDock(){
   return()=>observer.disconnect()
  },[dashboardRoute,routeKey])
 
+ const scrollToTop=useCallback(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),[])
  const activateDashboardView=useCallback((view:string,label:string)=>{
   setActiveKey(view)
-  if(!dashboardRoute){router.push(`/dashboard?view=${view}`);return}
+  scrollToTop()
+  if(!dashboardRoute){router.push(`/dashboard?view=${view}`,{scroll:true});return}
   const nav=document.querySelector('.product-tabs')
   const button=Array.from(nav?.querySelectorAll<HTMLButtonElement>('button')??[]).find(x=>x.textContent?.trim()===label)
-  if(button){button.click();return}
-  router.push(`/dashboard?view=${view}`)
- },[dashboardRoute,router])
+  if(button){button.click();scrollToTop();return}
+  router.push(`/dashboard?view=${view}`,{scroll:true})
+ },[dashboardRoute,router,scrollToTop])
+
+ const activateRoute=useCallback((key:string,href:string)=>{
+  setActiveKey(key)
+  scrollToTop()
+  router.push(href,{scroll:true})
+ },[router,scrollToTop])
 
  return <nav className="mobile-app-dock" aria-label="Navigation principale mobile">
   {ITEMS.map(item=>{
    const active=activeKey===item.key
-   return <button key={item.key} type="button" data-nav-key={item.key} className={active?'active':''} aria-label={item.label} aria-current={active?'page':undefined} onClick={()=>item.href?(setActiveKey(item.key),router.push(item.href)):activateDashboardView(item.view!,item.label)}>
+   return <button key={item.key} type="button" data-nav-key={item.key} className={active?'active':''} aria-label={item.label} aria-current={active?'page':undefined} onClick={()=>item.href?activateRoute(item.key,item.href):activateDashboardView(item.view!,item.label)}>
     <span className="mobile-app-dock-icon">{item.icon}</span><span>{item.short}</span>
    </button>
   })}

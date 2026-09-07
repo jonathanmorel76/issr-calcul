@@ -59,7 +59,6 @@ export default function MobilePremiumPreview(){
 
  return <>
   <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label="Ouvrir mon offre"><span className="beta-mode-dot"/><span>{premiumActive?'Premium':'Gratuit'}</span></button>
-  {!premiumActive&&<aside className="mobile-premium-context free" aria-label="Découvrir Premium"><div><span className="mobile-premium-kicker">PREMIUM</span><strong>{copy.title}</strong><p>{copy.premium}</p></div><button type="button" onClick={()=>setOpen(true)}>Découvrir</button></aside>}
   {open&&<div className="beta-mode-backdrop" role="dialog" aria-modal="true" aria-label="Mon Remplacement Premium" onClick={()=>setOpen(false)}>
    <section className="beta-mode-sheet" onClick={e=>e.stopPropagation()}>
     <div className="beta-mode-sheet-handle"/>
