@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AppShell from '@/components/app-shell'
+import PayrollAttentionWidget from '@/components/payroll-attention-widget'
 
 export default async function Dashboard() {
   const supabase = await createClient()
@@ -8,20 +9,29 @@ export default async function Dashboard() {
   const userId = data?.claims?.sub as string | undefined
   if (!userId) redirect('/login')
 
-  const [{data:entries},{data:missions},{data:establishments},{data:settings},{data:schedules}] = await Promise.all([
+  const [{data:entries},{data:missions},{data:establishments},{data:settings},{data:schedules},{data:payments},{data:payslips}] = await Promise.all([
     supabase.from('issr_entries').select('travel_date,distance_km,total_amount,rep_bonus,rep_plus_bonus').order('travel_date',{ascending:false}),
     supabase.from('issr_missions').select('id,title,start_date,end_date,status,establishment_id,teacher_replacement_status,mission_nature,issr_establishments(name)').order('start_date',{ascending:true}),
     supabase.from('issr_establishments').select('id,name,address,is_rep,is_rep_plus,usual_distance_km,notes').order('name',{ascending:true}),
     supabase.from('issr_user_settings').select('default_origin').maybeSingle(),
-    supabase.from('issr_rate_schedules').select('*').eq('is_official',true).order('valid_from',{ascending:false})
+    supabase.from('issr_rate_schedules').select('*').eq('is_official',true).order('valid_from',{ascending:false}),
+    supabase.from('issr_payments').select('entitlement_month,received_amount'),
+    supabase.from('issr_documents').select('title,file_name,created_at').eq('category','fiche_paie').order('created_at',{ascending:false}).limit(5)
   ])
 
-  return <AppShell
-    userId={userId}
-    initialEntries={(entries??[]) as any}
-    initialMissions={(missions??[]) as any}
-    initialEstablishments={(establishments??[]) as any}
-    initialDefaultOrigin={settings?.default_origin??''}
-    rateSchedules={(schedules??[]) as any}
-  />
+  return <>
+    <AppShell
+      userId={userId}
+      initialEntries={(entries??[]) as any}
+      initialMissions={(missions??[]) as any}
+      initialEstablishments={(establishments??[]) as any}
+      initialDefaultOrigin={settings?.default_origin??''}
+      rateSchedules={(schedules??[]) as any}
+    />
+    <PayrollAttentionWidget
+      entries={(entries??[]) as any}
+      payments={(payments??[]) as any}
+      payslips={(payslips??[]) as any}
+    />
+  </>
 }
