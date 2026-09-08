@@ -2,7 +2,7 @@
 
 type Step={title:string;detail:string}
 
-export default function PremiumFeatureJourney({eyebrow='Premium',title,description,steps,cta='Voir l’offre Premium'}:{eyebrow?:string;title:string;description:string;steps:Step[];cta?:string}){
+export default function PremiumFeatureJourney({eyebrow='Fonction avancée',title,description,steps,cta='Voir l’offre'}:{eyebrow?:string;title:string;description:string;steps:Step[];cta?:string}){
  function openSubscription(){
   window.dispatchEvent(new CustomEvent('mr-open-premium-subscription'))
  }
