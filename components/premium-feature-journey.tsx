@@ -2,15 +2,14 @@
 
 type Step={title:string;detail:string}
 
-export default function PremiumFeatureJourney({eyebrow='Premium',title,description,steps,cta='Activer Premium dans la Beta'}:{eyebrow?:string;title:string;description:string;steps:Step[];cta?:string}){
- function activate(){
-  try{window.localStorage.setItem('mr-beta-product-mode','premium')}catch{}
-  window.dispatchEvent(new CustomEvent('mr-beta-product-mode',{detail:{mode:'premium'}}))
+export default function PremiumFeatureJourney({eyebrow='Premium',title,description,steps,cta='Voir l’offre Premium'}:{eyebrow?:string;title:string;description:string;steps:Step[];cta?:string}){
+ function openSubscription(){
+  window.dispatchEvent(new CustomEvent('mr-open-premium-subscription'))
  }
- return <section className="dashboard-panel report-panel premium-journey-panel">
+ return <section className="dashboard-panel report-panel premium-journey-panel" data-premium-entry>
   <div className="report-head premium-journey-head">
    <div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>
-   <span className="premium-badge">Premium</span>
+   <button type="button" className="premium-badge premium-entry-link" onClick={openSubscription}>Premium</button>
   </div>
   <div className="premium-highlight-card">
    <p>{description}</p>
@@ -25,7 +24,7 @@ export default function PremiumFeatureJourney({eyebrow='Premium',title,descripti
    </div>
   </div>
   <div className="report-actions premium-journey-actions">
-   <button className="btn btn-premium" onClick={activate}>{cta}</button>
+   <button className="btn btn-premium" onClick={openSubscription}>{cta}</button>
   </div>
  </section>
 }
