@@ -7,10 +7,22 @@ export default function PremiumFeatureJourney({eyebrow='Premium',title,descripti
   try{window.localStorage.setItem('mr-beta-product-mode','premium')}catch{}
   window.dispatchEvent(new CustomEvent('mr-beta-product-mode',{detail:{mode:'premium'}}))
  }
- return <section className="dashboard-panel premium-locked-panel">
-  <div className="report-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><span className="tag">Premium</span></div>
+ return <section className="dashboard-panel report-panel">
+  <div className="report-head">
+   <div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>
+   <span className="tag">Premium</span>
+  </div>
   <p>{description}</p>
-  <div className="mr-list">{steps.map((step,index)=><article key={step.title}><div><strong>{index+1}. {step.title}</strong><small>{step.detail}</small></div></article>)}</div>
-  <button className="btn btn-primary" onClick={activate}>{cta}</button>
+  <div className="mr-list">
+   {steps.map((step,index)=><article key={step.title}>
+    <div>
+     <strong>{index+1}. {step.title}</strong>
+     <small>{step.detail}</small>
+    </div>
+   </article>)}
+  </div>
+  <div className="report-actions" style={{marginTop:'1rem'}}>
+   <button className="btn btn-primary" onClick={activate}>{cta}</button>
+  </div>
  </section>
 }
