@@ -1,0 +1,17 @@
+.indemnity-list .btn-export[data-issr-export-locked="1"]{display:none!important}
+
+.issr-export-lock-note{display:flex;align-items:center;gap:.65rem;width:100%;margin-top:.55rem;padding:.8rem .9rem;border:1px solid rgba(239,138,58,.24);border-radius:14px;background:linear-gradient(135deg,#fff7ef 0%,#fff1e3 100%);color:var(--color-brand-800);text-align:left;box-shadow:none;cursor:pointer}
+.issr-export-lock-note>span:last-child{display:flex;flex-direction:column;gap:.12rem;min-width:0}
+.issr-export-lock-note strong{font-size:.78rem;line-height:1.2;color:var(--color-brand-800)}
+.issr-export-lock-note small{font-size:.64rem;line-height:1.25;color:var(--text-secondary)}
+.issr-export-lock-note .premium-badge{flex:0 0 auto}
+
+.mobile-entry .mobile-entry-meta{margin-bottom:.72rem!important}
+.mobile-entry>.btn-danger{display:inline-flex!important;align-items:center!important;justify-content:center!important;margin-top:.08rem!important}
+
+@media(max-width:650px){
+  .issr-export-lock-note{padding:.72rem .78rem;border-radius:13px}
+  .issr-export-lock-note strong{font-size:.74rem}
+  .issr-export-lock-note small{font-size:.61rem}
+  .mobile-entry .mobile-entry-meta{margin-bottom:.78rem!important}
+}
