@@ -16,6 +16,7 @@ import IndemnityReconciliationBeta from '@/components/indemnity-reconciliation-b
 import PremiumOperationalInsightsBeta from '@/components/premium-operational-insights-beta'
 import QuickAccessConfigurator from '@/components/quick-access-configurator'
 import IssrFreeExportGuard from '@/components/issr-free-export-guard'
+import DashboardWidgetVisuals from '@/components/dashboard-widget-visuals'
 import './design-system.css'
 import './globals.css'
 import './dashboard.css'
@@ -46,6 +47,7 @@ import './quick-access-actions-polish.css'
 import './issr-free-guard.css'
 import './content-typography-hierarchy.css'
 import './account-compact-final.css'
+import './dashboard-widget-visuals.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
@@ -71,5 +73,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><PremiumSubscriptionRouter/><IndemnityReconciliationBeta/><PremiumOperationalInsightsBeta/><QuickAccessConfigurator/><IssrFreeExportGuard/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><PremiumSubscriptionRouter/><IndemnityReconciliationBeta/><PremiumOperationalInsightsBeta/><QuickAccessConfigurator/><IssrFreeExportGuard/><DashboardWidgetVisuals/>{children}</body></html>
 }
