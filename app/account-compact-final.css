@@ -1,0 +1,64 @@
+/* Final account density layer — intentionally loaded last. */
+@media(max-width:650px){
+  .app-menu-drawer .account-view{gap:.48rem!important}
+  .app-menu-drawer .account-view section{gap:.38rem!important;padding:.72rem!important;border-radius:14px!important}
+  .app-menu-drawer .account-view h3{font-size:.82rem!important;line-height:1.2!important;margin:0!important}
+  .app-menu-drawer .account-view label{gap:.18rem!important;font-size:.62rem!important;line-height:1.2!important}
+  .app-menu-drawer .account-view label small,
+  .app-menu-drawer .account-view section>small,
+  .app-menu-drawer .profile-upload small{font-size:.58rem!important;line-height:1.3!important;font-weight:600!important}
+
+  /* Keep 16px in editable text controls to prevent iOS focus zoom, but reduce geometry. */
+  .app-menu-drawer .account-view input:not([type=file]),
+  .app-menu-drawer .account-view select,
+  .app-menu-drawer .account-view textarea{
+    font-size:16px!important;
+    min-height:36px!important;
+    height:36px!important;
+    line-height:1.05!important;
+    padding:.28rem .56rem!important;
+    border-radius:11px!important;
+  }
+  .app-menu-drawer .account-view textarea{height:auto!important;min-height:70px!important}
+
+  .app-menu-drawer .profile-age-hint{padding:.42rem .58rem!important;font-size:.62rem!important;border-radius:11px!important}
+  .app-menu-drawer .profile-age-hint strong{font-size:.68rem!important}
+  .app-menu-drawer .birthday-account-note{padding:.4rem .55rem!important;font-size:.62rem!important}
+
+  .app-menu-drawer .account-profile-preview{padding:.52rem!important;gap:.55rem!important}
+  .app-menu-drawer .account-profile-preview strong{font-size:.78rem!important}
+  .app-menu-drawer .account-profile-preview small{font-size:.58rem!important;line-height:1.22!important}
+
+  .app-menu-drawer .app-menu-section-label{font-size:.58rem!important;margin-bottom:.3rem!important}
+  .app-menu-drawer .avatar-picker{grid-template-columns:1fr 1fr!important;gap:.4rem!important}
+  .app-menu-drawer .avatar-option{min-height:44px!important;padding:.38rem .46rem!important;gap:.42rem!important;font-size:.66rem!important;border-radius:11px!important}
+  .app-menu-drawer .avatar-option-icon{width:28px!important;height:28px!important;flex:0 0 28px!important;border-radius:9px!important}
+  .app-menu-drawer .avatar-option-icon svg{width:18px!important;height:18px!important}
+
+  /* Native file input was visually dominating the account page. */
+  .app-menu-drawer .profile-upload{padding:.58rem!important;gap:.28rem!important}
+  .app-menu-drawer .profile-upload input[type=file]{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    padding:.2rem 0!important;
+    border:0!important;
+    background:transparent!important;
+    border-radius:0!important;
+    font-size:.62rem!important;
+    line-height:1.2!important;
+  }
+  .app-menu-drawer .profile-upload input[type=file]::file-selector-button{
+    margin-right:.5rem!important;
+    padding:.36rem .55rem!important;
+    border:1px solid var(--border-default)!important;
+    border-radius:10px!important;
+    background:var(--surface-soft)!important;
+    color:var(--color-brand-800)!important;
+    font:800 .62rem var(--font-app),sans-serif!important;
+  }
+
+  .app-menu-drawer .account-view .btn{min-height:36px!important;padding:.45rem .65rem!important;font-size:.68rem!important;border-radius:11px!important}
+  .app-menu-drawer .profile-account-save{width:auto!important;align-self:flex-start!important}
+  .app-menu-drawer .account-message{font-size:.62rem!important;padding:.5rem .6rem!important}
+}
