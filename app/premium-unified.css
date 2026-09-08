@@ -1,0 +1,121 @@
+/* Final Premium visual layer — loaded last on purpose.
+   One badge, one orange language, one locked-card treatment across the app. */
+
+:root{
+  --premium-orange:#d97f2e;
+  --premium-orange-dark:#b96720;
+  --premium-orange-soft:#fff1e4;
+  --premium-orange-soft-2:#fff8f1;
+  --premium-border:rgba(217,127,46,.22);
+  --premium-shadow:0 10px 24px rgba(217,127,46,.08);
+}
+
+/* One canonical Premium badge, regardless of the legacy class used by a view. */
+.premium-badge,
+.beta-premium-badge,
+.premium-inline-lock>span,
+.premium-locked-panel .tag,
+.premium-journey-panel .tag{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:max-content!important;
+  min-width:0!important;
+  min-height:34px!important;
+  padding:.42rem .82rem!important;
+  border-radius:999px!important;
+  border:1px solid var(--premium-border)!important;
+  background:linear-gradient(135deg,#fff6ed 0%,#ffe9d6 100%)!important;
+  color:var(--premium-orange-dark)!important;
+  font-family:inherit!important;
+  font-size:.72rem!important;
+  line-height:1!important;
+  font-weight:900!important;
+  letter-spacing:.055em!important;
+  text-transform:uppercase!important;
+  white-space:nowrap!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+
+/* Prevent old layout rules from stretching a Premium label across the card. */
+.premium-inline-lock>span{align-self:flex-start!important;margin:0 0 .45rem!important}
+.premium-inline-lock>strong{display:block;color:var(--color-brand-800);font-weight:850;line-height:1.35}
+
+/* Shared Premium card treatment. */
+.premium-highlight-card,
+.premium-inline-lock,
+.beta-payment-overview.free .beta-payment-overview-lock,
+.beta-operational-insights.free .beta-operational-lock,
+.premium-locked-panel{
+  border:1px solid var(--premium-border)!important;
+  background:linear-gradient(135deg,var(--premium-orange-soft-2) 0%,var(--premium-orange-soft) 100%)!important;
+  border-radius:20px!important;
+  box-shadow:var(--premium-shadow)!important;
+}
+
+.premium-inline-lock,
+.beta-payment-overview.free .beta-payment-overview-lock,
+.beta-operational-insights.free .beta-operational-lock{
+  padding:1rem!important;
+}
+
+.premium-journey-panel,
+.payroll-top-feature{
+  border-color:var(--premium-border)!important;
+  box-shadow:0 12px 30px rgba(16,62,67,.07),var(--premium-shadow)!important;
+}
+
+.premium-journey-panel .eyebrow,
+.payroll-top-feature .eyebrow,
+.beta-payment-overview .eyebrow,
+.beta-operational-insights .eyebrow{
+  color:var(--premium-orange)!important;
+}
+
+/* Canonical CTA for Premium actions. */
+.btn-premium,
+.premium-journey-panel .btn-premium{
+  background:linear-gradient(135deg,#e18b3c 0%,#c96f20 100%)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 8px 18px rgba(201,111,32,.18)!important;
+}
+
+/* Keep the top-feature star distinct from the Premium badge itself. */
+.payroll-top-ribbon{
+  background:linear-gradient(135deg,#fff7ee,#ffedda)!important;
+  color:var(--premium-orange-dark)!important;
+  border-color:var(--premium-border)!important;
+}
+
+@media(max-width:650px){
+  .premium-badge,
+  .beta-premium-badge,
+  .premium-inline-lock>span,
+  .premium-locked-panel .tag,
+  .premium-journey-panel .tag{
+    min-height:30px!important;
+    padding:.36rem .7rem!important;
+    font-size:.66rem!important;
+    letter-spacing:.05em!important;
+  }
+
+  .premium-journey-head{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    gap:.7rem!important;
+  }
+  .premium-journey-head>div{min-width:0;flex:1}
+  .premium-journey-head .premium-badge{flex:none!important;margin-top:0!important}
+
+  .premium-highlight-card,
+  .premium-inline-lock,
+  .beta-payment-overview.free .beta-payment-overview-lock,
+  .beta-operational-insights.free .beta-operational-lock,
+  .premium-locked-panel{
+    border-radius:17px!important;
+    box-shadow:0 6px 18px rgba(217,127,46,.06)!important;
+  }
+}
