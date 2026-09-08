@@ -39,6 +39,7 @@ function analyzeLines(lines:string[]){
 }
 
 export async function POST(request:NextRequest){
+ let loadingTask:ReturnType<(typeof import('pdfjs-dist/legacy/build/pdf.mjs'))['getDocument']>|null=null
  try{
   const {documentId}=await request.json() as {documentId?:string}
   if(!documentId)return NextResponse.json({error:'Document manquant.'},{status:400})
@@ -54,7 +55,7 @@ export async function POST(request:NextRequest){
   if(fileError||!file)return NextResponse.json({error:'Impossible de lire le fichier.'},{status:400})
   const bytes=new Uint8Array(await file.arrayBuffer())
   const pdfjs=await import('pdfjs-dist/legacy/build/pdf.mjs')
-  const loadingTask=pdfjs.getDocument({data:bytes,isEvalSupported:false})
+  loadingTask=pdfjs.getDocument({data:bytes})
   const pdf=await loadingTask.promise
   const lines:string[]=[]
   for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
@@ -71,7 +72,6 @@ export async function POST(request:NextRequest){
    const pageLines=[...groups.entries()].sort((a,b)=>b[0]-a[0]).map(([,row])=>row.sort((a,b)=>a.x-b.x).map(i=>i.text).join(' ').replace(/\s+/g,' ').trim()).filter(Boolean)
    lines.push(...pageLines)
   }
-  await pdf.destroy()
   const text=lines.join('\n')
   if(text.replace(/\s/g,'').length<80)return NextResponse.json({error:'Ce PDF semble être un scan ou ne contient pas assez de texte exploitable. La lecture OCR n’est pas encore activée.'},{status:422})
   const analysis=analyzeLines(lines)
@@ -84,5 +84,7 @@ export async function POST(request:NextRequest){
  }catch(error:any){
   console.error('analyze-payslip',error)
   return NextResponse.json({error:'Analyse impossible pour ce document.'},{status:500})
+ }finally{
+  try{await loadingTask?.destroy()}catch{}
  }
 }
