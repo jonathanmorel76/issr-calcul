@@ -13,10 +13,11 @@ export default function DashboardViewNavigation(){
   let queryApplied=false
   let scheduled=false
 
+  router.prefetch('/dashboard/versements')
   router.prefetch('/dashboard/bilans')
   router.prefetch('/dashboard/documents')
 
-  function ensureRouteTab(nav:HTMLElement,label:string,href:string){
+  function ensureRouteTab(nav:HTMLElement,label:string,href:string,insertBeforeLabel?:string){
    const native=Array.from(nav.querySelectorAll<HTMLButtonElement>('button')).find(button=>button.textContent?.trim()===label)
    if(native){
     native.style.display='none'
@@ -34,7 +35,9 @@ export default function DashboardViewNavigation(){
      event.preventDefault()
      router.push(href)
     })
-    nav.appendChild(link)
+    const before=insertBeforeLabel?Array.from(nav.querySelectorAll<HTMLElement>('a,button')).find(el=>el.textContent?.trim()===insertBeforeLabel):null
+    if(before)nav.insertBefore(link,before)
+    else nav.appendChild(link)
    }else if(link.getAttribute('href')!==href){
     link.href=href
    }
@@ -45,7 +48,8 @@ export default function DashboardViewNavigation(){
    const nav=document.querySelector<HTMLElement>('.product-tabs')
    if(!nav)return
 
-   ensureRouteTab(nav,'Mes bilans','/dashboard/bilans')
+   ensureRouteTab(nav,'Mes versements','/dashboard/versements','Mes bilans')
+   ensureRouteTab(nav,'Mes bilans','/dashboard/bilans','Mes documents')
    ensureRouteTab(nav,'Mes documents','/dashboard/documents')
 
    if(!queryApplied){
