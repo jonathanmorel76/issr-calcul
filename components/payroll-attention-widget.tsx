@@ -78,7 +78,7 @@ export default function PayrollAttentionWidget({entries,payments,payslips}:{entr
  return createPortal(<section className={`payroll-top-feature payroll-top-feature-compact payroll-top-feature-${scope} ${premium?'premium-active':'free-preview'}`} aria-label="Top fonctionnalité : Paie">
   <div className="payroll-top-ribbon"><span aria-hidden="true">★</span> Top fonctionnalité</div>
   <div className="payroll-top-head">
-   <div><span className="eyebrow">Paie Premium</span><h2>Vérifiez que vos ISSR ont vraiment été payées</h2><p>{contextualCopy}</p></div>
+   <div><span className="eyebrow">Contrôle de paie</span><h2>Vérifiez que vos ISSR ont vraiment été payées</h2><p>{contextualCopy}</p></div>
    <span className="premium-badge">Premium</span>
   </div>
   {premium&&<div className="payroll-top-mini-status"><div><span>À rapprocher</span><strong>{euro(summary.total)}</strong></div><div><span>Mois concernés</span><strong>{summary.months}</strong></div>{latest&&<small>Dernier bulletin : {new Date(latest.created_at).toLocaleDateString('fr-FR')}</small>}</div>}
