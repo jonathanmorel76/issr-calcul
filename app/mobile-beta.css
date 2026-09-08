@@ -19,7 +19,6 @@
   .product-hero .brand-mark{width:40px;height:40px}
   .product-hero .brand-copy strong{font-size:1rem}
 
-  /* The native-style bottom dock is the single primary navigation on mobile. */
   .product-tabs{display:none!important}
 
   .dashboard-main{padding:.8rem .75rem calc(1.5rem + env(safe-area-inset-bottom))}
@@ -44,12 +43,14 @@
   .document-list-head{margin-bottom:.75rem}
   .document-file-badge{border-radius:12px}
 
-  .mobile-app-dock{position:fixed;left:0;right:0;bottom:0;z-index:120;display:grid;grid-template-columns:repeat(6,1fr);padding:.38rem .28rem max(.38rem,env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--border-default);box-shadow:0 -8px 28px rgba(16,62,67,.09);backdrop-filter:saturate(160%) blur(18px);-webkit-backdrop-filter:saturate(160%) blur(18px)}
-  .mobile-app-dock button{appearance:none;border:0;background:transparent;color:var(--text-secondary);min-width:0;min-height:52px;padding:.25rem .08rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;border-radius:12px;font-size:.58rem;font-weight:800;letter-spacing:-.02em}
+  .mobile-app-dock{position:fixed;left:0;right:0;bottom:0;z-index:120;display:grid;grid-template-columns:repeat(7,1fr);padding:.38rem .16rem max(.38rem,env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--border-default);box-shadow:0 -8px 28px rgba(16,62,67,.09);backdrop-filter:saturate(160%) blur(18px);-webkit-backdrop-filter:saturate(160%) blur(18px)}
+  .mobile-app-dock button{appearance:none;border:0;background:transparent;color:var(--text-secondary);min-width:0;min-height:52px;padding:.25rem .02rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.16rem;border-radius:11px;font-size:.53rem;font-weight:800;letter-spacing:-.025em;position:relative}
   .mobile-app-dock button.active{color:var(--color-brand-800);background:var(--color-accent-green-soft)}
-  .mobile-app-dock-icon{width:22px;height:22px;display:grid;place-items:center}
+  .mobile-app-dock-icon{width:22px;height:22px;display:grid;place-items:center;position:relative}
   .mobile-app-dock-icon svg{width:22px;height:22px;display:block}
   .mobile-app-dock button:nth-child(4).active{background:var(--color-accent-orange-soft)}
+  .mobile-app-dock button.top-feature-nav{color:#a65d21}.mobile-app-dock button.top-feature-nav.active{background:linear-gradient(180deg,#fff1e4,#fff8f1);color:#a65d21}
+  .top-feature-star{position:absolute;right:-7px;top:-7px;width:14px;height:14px;display:grid;place-items:center;border-radius:999px;background:#ef943e;color:white;font-size:8px;line-height:1;box-shadow:0 2px 6px rgba(215,130,48,.28)}
 
   .auth-page{min-height:100dvh;padding:max(.7rem,env(safe-area-inset-top)) .7rem max(calc(74px + env(safe-area-inset-bottom)),.7rem)}
   .auth-board{border-radius:22px}
@@ -57,8 +58,9 @@
 }
 
 @media(max-width:380px){
-  .mobile-app-dock button{font-size:.54rem}
+  .mobile-app-dock button{font-size:.49rem}
   .mobile-app-dock-icon,.mobile-app-dock-icon svg{width:20px;height:20px}
+  .top-feature-star{right:-6px;top:-6px}
 }
 
 @media(display-mode:standalone) and (max-width:650px){
