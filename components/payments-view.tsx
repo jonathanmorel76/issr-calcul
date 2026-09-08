@@ -27,6 +27,7 @@ export default function PaymentsView({userId}:{userId:string}){
  const [entries,setEntries]=useState<Entry[]>([]),[payments,setPayments]=useState<Payment[]>([]),[docs,setDocs]=useState<Doc[]>([])
  const [received,setReceived]=useState(''),[note,setNote]=useState(''),[documentId,setDocumentId]=useState(''),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[copied,setCopied]=useState(false)
  const [analysis,setAnalysis]=useState<PayslipAnalysis|null>(null),[analysisBusy,setAnalysisBusy]=useState(false),[analysisError,setAnalysisError]=useState('')
+ useEffect(()=>{const requested=new URLSearchParams(window.location.search).get('month');if(requested&&/^20\d{2}-(0[1-9]|1[0-2])$/.test(requested))setEntitlementMonth(requested)},[])
  useEffect(()=>{let live=true;(async()=>{setLoading(true);const [e,p,d]=await Promise.all([
   supabase.from('issr_entries').select('travel_date,destination,distance_km,total_amount,rate_code').order('travel_date'),
   supabase.from('issr_payments').select('id,payment_month,entitlement_month,received_amount,note,source_document_id').order('payment_month',{ascending:false}),
