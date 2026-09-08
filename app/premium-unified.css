@@ -88,6 +88,29 @@
   border-color:var(--premium-border)!important;
 }
 
+/* Documents: keep the locked mission-association copy truly centered. */
+.documents-page .premium-inline-lock{
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  min-height:78px!important;
+  padding:1rem 5.5rem!important;
+}
+.documents-page .premium-inline-lock>strong{
+  width:100%!important;
+  margin:0!important;
+  text-align:center!important;
+  justify-self:center!important;
+}
+.documents-page .premium-inline-lock>span{
+  position:absolute!important;
+  top:50%!important;
+  right:1rem!important;
+  transform:translateY(-50%)!important;
+  margin:0!important;
+  align-self:auto!important;
+}
+
 @media(max-width:650px){
   .premium-badge,
   .beta-premium-badge,
@@ -118,4 +141,10 @@
     border-radius:17px!important;
     box-shadow:0 6px 18px rgba(217,127,46,.06)!important;
   }
+
+  .documents-page .premium-inline-lock{
+    min-height:82px!important;
+    padding:1rem 4.5rem!important;
+  }
+  .documents-page .premium-inline-lock>span{right:.75rem!important}
 }
