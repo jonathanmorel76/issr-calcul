@@ -9,9 +9,9 @@ export default function DocumentsAccessView({userId}:{userId:string}){
  return <>
   <DocumentsView userId={userId}/>
   {!premium&&<main className="dashboard-main documents-page" style={{paddingTop:0}}><PremiumFeatureJourney
-   eyebrow="Documents Premium"
+   eyebrow="Archive complète"
    title="Au-delà des 5 documents gratuits"
-   description="La formule gratuite conserve vos pièces essentielles. Premium transforme la bibliothèque en véritable archive de suivi de remplacement."
+   description="La formule gratuite conserve vos pièces essentielles. Vous pouvez ensuite transformer la bibliothèque en véritable archive de suivi de remplacement."
    steps={[
     {title:'Archiver sans limite',detail:'Conservez vos arrêtés, attestations, emplois du temps, justificatifs et fiches de paie sur toute l’année.'},
     {title:'Relier les pièces aux missions',detail:'Associez chaque document au remplacement concerné pour retrouver immédiatement le bon justificatif.'},
