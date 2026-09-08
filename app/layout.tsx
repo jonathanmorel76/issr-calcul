@@ -41,6 +41,7 @@ import './beta-mobile-corrections.css'
 import './premium-unified.css'
 import './form-typography-unification.css'
 import './quick-access-configurator.css'
+import './quick-access-actions-polish.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
