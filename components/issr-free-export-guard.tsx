@@ -22,7 +22,7 @@ export default function IssrFreeExportGuard(){
         button.dataset.issrExportLocked=isFree?'1':'0'
       })
 
-      let note=tools.querySelector<HTMLElement>('.issr-export-lock-note')
+      let note=tools.querySelector<HTMLButtonElement>('.issr-export-lock-note')
       if(isFree){
         if(!note){
           note=document.createElement('button')
