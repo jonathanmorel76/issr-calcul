@@ -13,7 +13,6 @@ import MobileAppDock from '@/components/mobile-app-dock'
 import MobilePremiumPreview from '@/components/mobile-premium-preview'
 import PremiumSubscriptionRouter from '@/components/premium-subscription-router'
 import IndemnityReconciliationBeta from '@/components/indemnity-reconciliation-beta'
-import PremiumPaymentOverviewBeta from '@/components/premium-payment-overview-beta'
 import PremiumOperationalInsightsBeta from '@/components/premium-operational-insights-beta'
 import './design-system.css'
 import './globals.css'
@@ -33,9 +32,9 @@ import './hero-school-patterns.css'
 import './mobile-beta.css'
 import './mobile-premium.css'
 import './indemnity-reconciliation-beta.css'
-import './premium-payment-overview-beta.css'
 import './premium-operational-insights-beta.css'
 import './premium-journey.css'
+import './payroll-top-feature.css'
 import './mobile-final-polish.css'
 import './beta-mobile-corrections.css'
 
@@ -63,5 +62,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><PremiumSubscriptionRouter/><IndemnityReconciliationBeta/><PremiumPaymentOverviewBeta/><PremiumOperationalInsightsBeta/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><PremiumSubscriptionRouter/><IndemnityReconciliationBeta/><PremiumOperationalInsightsBeta/>{children}</body></html>
 }
