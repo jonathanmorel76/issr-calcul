@@ -1,7 +1,7 @@
 'use client'
 
 import PaymentsView from '@/components/payments-view'
-import PremiumFeatureJourney from '@/components/premium-feature-journey'
+import PremiumFeatureJourney from '@/components/premium-feature-feature-journey'
 import useBetaProductMode from '@/components/use-beta-product-mode'
 
 export default function PaymentsAccessView({userId}:{userId:string}){
@@ -10,7 +10,7 @@ export default function PaymentsAccessView({userId}:{userId:string}){
  return <main className="dashboard-main reports-page payments-page">
   <section className="dashboard-panel report-panel">
    <div className="report-head"><div><span className="eyebrow">Suivi de paie</span><h2>Vérifiez si vos ISSR ont réellement été payées</h2></div><span className="tag">Pro</span></div>
-   <p>Le calcul de vos droits reste disponible avec Essentiel. Le rapprochement avec vos bulletins de paie, la détection des écarts et la préparation d’une régularisation prennent le relais lorsque vous souhaitez contrôler les montants réellement reçus.</p>
+   <p>Le calcul de vos droits reste disponible avec le mode Essentiel. Le rapprochement avec vos bulletins de paie, la détection des écarts et la préparation d’une régularisation prennent le relais lorsque vous souhaitez contrôler les montants réellement reçus.</p>
   </section>
   <PremiumFeatureJourney
    eyebrow="Parcours de contrôle"
@@ -22,6 +22,6 @@ export default function PaymentsAccessView({userId}:{userId:string}){
     {title:'Traiter les écarts',detail:'Suivez les montants manquants, priorisez les anomalies et préparez un dossier de régularisation si nécessaire.'},
    ]}
   />
-  <section className="dashboard-panel report-panel"><span className="eyebrow">Inclus dans Essentiel</span><h2>Vos droits restent accessibles avec Essentiel</h2><p>Vous pouvez continuer à enregistrer vos missions, calculer vos ISSR, suivre le mois en cours et consulter vos montants estimés. Le contrôle de paie intervient ensuite lorsque vous souhaitez comparer ces droits avec les sommes réellement versées.</p></section>
+  <section className="dashboard-panel report-panel"><span className="eyebrow">Inclus dans le mode Essentiel</span><h2>Vos droits restent accessibles avec le mode Essentiel</h2><p>Vous pouvez continuer à enregistrer vos missions, calculer vos ISSR, suivre le mois en cours et consulter vos montants estimés. Le contrôle de paie intervient ensuite lorsque vous souhaitez comparer ces droits avec les sommes réellement versées.</p></section>
  </main>
 }
