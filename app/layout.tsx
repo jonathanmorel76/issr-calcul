@@ -38,6 +38,7 @@ import './payroll-top-feature.css'
 import './mobile-final-polish.css'
 import './beta-mobile-corrections.css'
 import './premium-unified.css'
+import './form-typography-unification.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
