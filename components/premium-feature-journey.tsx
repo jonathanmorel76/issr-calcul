@@ -9,7 +9,7 @@ export default function PremiumFeatureJourney({eyebrow='Fonction avancée',title
  return <section className="dashboard-panel report-panel premium-journey-panel" data-premium-entry>
   <div className="report-head premium-journey-head">
    <div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div>
-   <button type="button" className="premium-badge premium-entry-link" onClick={openSubscription}>Premium</button>
+   <button type="button" className="premium-badge premium-entry-link" onClick={openSubscription}>Pro</button>
   </div>
   <div className="premium-highlight-card">
    <p>{description}</p>
