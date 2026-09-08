@@ -69,7 +69,7 @@ export default function QuickAccessConfigurator(){
   {open&&<div className="quick-access-picker" role="dialog" aria-label="Choisir trois accès rapides">
    <div className="quick-access-picker-head"><div><strong>Choisir mes accès</strong><small>Sélectionnez exactement 3 menus.</small></div><span>{draft.length}/3</span></div>
    <div className="quick-access-options">{ITEMS.map(item=>{const active=draft.includes(item.key),blocked=!active&&draft.length>=3;return <button key={item.key} type="button" className={`${active?'selected':''} ${item.top?'top-feature':''}`.trim()} disabled={blocked} onClick={()=>toggle(item.key)}><span className="quick-access-option-icon" aria-hidden="true">{item.icon}</span><span><strong>{item.short}{item.top?' ★':''}</strong><small>{item.label}</small></span><b>{active?'✓':'+'}</b></button>})}</div>
-   <div className="quick-access-picker-actions"><button type="button" className="btn btn-secondary" onClick={()=>setOpen(false)}>Annuler</button><button type="button" className="btn btn-primary" disabled={draft.length!==3} onClick={save}>Enregistrer mes 3 accès</button></div>
+   <div className="quick-access-picker-actions"><button type="button" className="btn btn-secondary" onClick={()=>setOpen(false)}>Annuler</button><button type="button" className="btn quick-access-save" style={{background:'#e9f3f2',color:'#164f55',border:'1px solid #bfd4d2',fontWeight:800}} disabled={draft.length!==3} onClick={save}>Enregistrer mes 3 accès</button></div>
   </div>}
  </div>,mount)
 }
