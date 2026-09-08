@@ -23,9 +23,15 @@ export default function PayrollAttentionWidget({entries,payments,payslips}:{entr
    const activeLabel=document.querySelector('.product-tabs button.active')?.textContent?.trim()??''
    const params=new URLSearchParams(window.location.search)
    const requested=params.get('view')
-   const nextScope:Scope|null=
-    activeLabel==='Mes indemnités'||requested==='indemnities'?'indemnities':
-    (!activeLabel||activeLabel==='Tableau de bord'||!requested||requested==='dashboard')?'dashboard':null
+
+   let nextScope:Scope|null=null
+   if(activeLabel){
+    if(activeLabel==='Tableau de bord')nextScope='dashboard'
+    else if(activeLabel==='Mes indemnités')nextScope='indemnities'
+   }else{
+    if(requested==='indemnities')nextScope='indemnities'
+    else if(!requested||requested==='dashboard')nextScope='dashboard'
+   }
 
    document.querySelectorAll('#payroll-top-feature-host').forEach((node,i)=>{if(i>0)node.remove()})
    if(!nextScope){setScope(null);setMount(null);document.querySelector('#payroll-top-feature-host')?.remove();return}
