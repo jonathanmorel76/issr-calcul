@@ -11,6 +11,7 @@ import DashboardViewNavigation from '@/components/dashboard-view-navigation'
 import HeroArtworkHydrator from '@/components/hero-artwork-hydrator'
 import MobileAppDock from '@/components/mobile-app-dock'
 import MobilePremiumPreview from '@/components/mobile-premium-preview'
+import PremiumSubscriptionRouter from '@/components/premium-subscription-router'
 import IndemnityReconciliationBeta from '@/components/indemnity-reconciliation-beta'
 import PremiumPaymentOverviewBeta from '@/components/premium-payment-overview-beta'
 import PremiumOperationalInsightsBeta from '@/components/premium-operational-insights-beta'
@@ -62,5 +63,5 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><IndemnityReconciliationBeta/><PremiumPaymentOverviewBeta/><PremiumOperationalInsightsBeta/>{children}</body></html>
+  return <html lang="fr"><body className={manrope.variable}><AppUtilityMenu/><RateRangeDisplayFix/><WidgetCustomizerSync/><GeolocatedAutocomplete/><MissionWeekdayPrefilter/><ActiveTabCentering/><IndemnityMonthFilterPosition/><DashboardViewNavigation/><HeroArtworkHydrator/><MobileAppDock/><MobilePremiumPreview/><PremiumSubscriptionRouter/><IndemnityReconciliationBeta/><PremiumPaymentOverviewBeta/><PremiumOperationalInsightsBeta/>{children}</body></html>
 }
