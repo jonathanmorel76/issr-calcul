@@ -9,6 +9,17 @@ const MONTHS:Record<string,string>={
 }
 const ALLOWED_IMAGES=new Set(['image/jpeg','image/png','image/webp'])
 
+type PeriodSuggestion={entitlementMonth:string|null;total:number;lineCount:number}
+type PeriodComparison=PeriodSuggestion&{
+ expected:number|null
+ alreadyAllocated:number
+ outstanding:number|null
+ gap:number|null
+ matchPercent:number|null
+ status:'exact'|'close'|'partial'|'excess'|'no-rights'|'unknown'
+ label:string
+}
+
 function normalize(value:string){return value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
 function parseAmount(raw:string){
  const clean=raw.replace(/\s/g,'').replace(/\.(?=\d{3}(?:\D|$))/g,'').replace(',','.')
@@ -27,6 +38,8 @@ function inferMonth(text:string,fallbackYear?:string){
  return null
 }
 function relevantLine(line:string){return /issr|sujetions speciales de remplacement|sujétions spéciales de remplacement|indemnit[eé].{0,32}remplacement|remplacement.{0,32}indemnit[eé]/i.test(line)}
+function euro(value:number){return value.toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}
+function monthLabel(value:string){return new Date(`${value}-01T12:00:00`).toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}
 
 function analyzeLines(lines:string[],fallbackYear?:string){
  const relevant=lines.filter(relevantLine)
@@ -39,13 +52,44 @@ function analyzeLines(lines:string[],fallbackYear?:string){
  const deduped=suggestions.filter((s,i,a)=>a.findIndex(x=>x.label===s.label&&Math.abs(x.amount-s.amount)<0.001)===i)
  const total=deduped.reduce((sum,s)=>sum+s.amount,0)
  const confidence=deduped.length>=2?'high':deduped.length===1?'medium':'low'
- const grouped=new Map<string,{entitlementMonth:string|null;total:number;lineCount:number}>()
+ const grouped=new Map<string,PeriodSuggestion>()
  for(const item of deduped){
   const key=item.entitlementMonth??'unknown'
   const current=grouped.get(key)??{entitlementMonth:item.entitlementMonth,total:0,lineCount:0}
   current.total+=item.amount;current.lineCount+=1;grouped.set(key,current)
  }
  return {suggestions:deduped,total,confidence,periodSuggestions:[...grouped.values()]}
+}
+
+function comparePeriods(periods:PeriodSuggestion[],entries:{travel_date:string;total_amount:number}[],payments:{entitlement_month:string;received_amount:number}[]){
+ const expectedByMonth=new Map<string,number>()
+ for(const entry of entries){
+  const month=entry.travel_date.slice(0,7)
+  expectedByMonth.set(month,(expectedByMonth.get(month)??0)+Number(entry.total_amount||0))
+ }
+ const allocatedByMonth=new Map<string,number>()
+ for(const payment of payments){
+  const month=payment.entitlement_month.slice(0,7)
+  allocatedByMonth.set(month,(allocatedByMonth.get(month)??0)+Number(payment.received_amount||0))
+ }
+ return periods.map<PeriodComparison>(period=>{
+  if(!period.entitlementMonth)return {...period,expected:null,alreadyAllocated:0,outstanding:null,gap:null,matchPercent:null,status:'unknown',label:'Période non identifiée : vérification manuelle nécessaire.'}
+  const month=period.entitlementMonth
+  const expected=expectedByMonth.get(month)??0
+  const alreadyAllocated=allocatedByMonth.get(month)??0
+  const outstanding=Math.max(0,expected-alreadyAllocated)
+  if(expected<=0)return {...period,expected,alreadyAllocated,outstanding,gap:period.total,matchPercent:null,status:'no-rights',label:`Aucun droit ISSR enregistré pour ${monthLabel(month)}.`}
+  const gap=period.total-outstanding
+  const tolerance=Math.max(1,Math.min(5,outstanding*0.02))
+  const matchPercent=outstanding>0?Math.round((period.total/outstanding)*1000)/10:null
+  let status:PeriodComparison['status']='partial'
+  let label=''
+  if(Math.abs(gap)<0.01){status='exact';label=`Correspondance exacte avec les ${euro(outstanding)} restant à recevoir.`}
+  else if(Math.abs(gap)<=tolerance){status='close';label=`Correspondance très probable : écart de ${euro(Math.abs(gap))}.`}
+  else if(gap<0){status='partial';label=`Versement partiel probable : ${euro(Math.abs(gap))} resteraient encore à rapprocher.`}
+  else{status='excess';label=`Montant supérieur de ${euro(gap)} aux droits restant à rapprocher.`}
+  return {...period,expected,alreadyAllocated,outstanding,gap,matchPercent,status,label}
+ })
 }
 
 async function ocrImage(input:Uint8Array|Buffer){
@@ -76,7 +120,7 @@ async function extractPdfText(bytes:Uint8Array){
    }
    lines.push(...[...groups.entries()].sort((a,b)=>b[0]-a[0]).map(([,row])=>row.sort((a,b)=>a.x-b.x).map(i=>i.text).join(' ').replace(/\s+/g,' ').trim()).filter(Boolean))
   }
-  return {lines,pdf,pdfjs}
+  return {lines,pdf,loadingTask}
  }catch(error){try{await loadingTask.destroy()}catch{};throw error}
 }
 
@@ -124,7 +168,7 @@ export async function POST(request:NextRequest){
   }else{
    const extracted=await extractPdfText(bytes)
    lines=extracted.lines
-   pdfLoadingTask=extracted.pdf?.loadingTask??null
+   pdfLoadingTask=extracted.loadingTask
    if(lines.join('').replace(/\s/g,'').length<80){method='ocr-pdf';lines=await ocrPdf(bytes,extracted.pdf)}
   }
   const text=lines.join('\n')
@@ -132,12 +176,21 @@ export async function POST(request:NextRequest){
   const inferredPaymentMonth=inferMonth(`${doc.title??''} ${doc.file_name??''}\n${text.slice(0,5000)}`)
   const fallbackYear=inferredPaymentMonth?.slice(0,4)
   const analysis=analyzeLines(lines,fallbackYear)
+  const [{data:entries,error:entriesError},{data:payments,error:paymentsError}]=await Promise.all([
+   supabase.from('issr_entries').select('travel_date,total_amount').eq('user_id',userId),
+   supabase.from('issr_payments').select('entitlement_month,received_amount').eq('user_id',userId),
+  ])
+  if(entriesError||paymentsError)return NextResponse.json({error:'Impossible de comparer la fiche avec vos droits enregistrés.'},{status:500})
+  const comparisons=comparePeriods(analysis.periodSuggestions,(entries??[]) as {travel_date:string;total_amount:number}[],(payments??[]) as {entitlement_month:string;received_amount:number}[])
+  const comparisonSummary=comparisons.map(item=>item.entitlementMonth?`${monthLabel(item.entitlementMonth)} : ${item.label}`:item.label).join(' ')
   return NextResponse.json({
    document:{id:doc.id,title:doc.title,fileName:doc.file_name},
    method,
    inferredPaymentMonth,
    ...analysis,
-   disclaimer:'Résultat indicatif : vérifiez toujours les lignes et périodes proposées avant de les affecter à vos droits ISSR.'
+   periodSuggestions:comparisons,
+   comparisonSummary,
+   disclaimer:`Résultat indicatif : vérifiez toujours les lignes et périodes proposées avant validation. ${comparisonSummary}`
   })
  }catch(error:any){
   console.error('analyze-payslip',error)
