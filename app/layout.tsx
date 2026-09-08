@@ -44,6 +44,7 @@ import './form-typography-unification.css'
 import './quick-access-configurator.css'
 import './quick-access-actions-polish.css'
 import './issr-free-guard.css'
+import './content-typography-hierarchy.css'
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-app' })
 
