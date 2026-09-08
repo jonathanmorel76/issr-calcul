@@ -1,0 +1,128 @@
+/* Dashboard widget type markers — visual language aligned with the mobile dock. */
+.widget-heading,
+.widget-quick>div:first-child{
+  position:relative;
+}
+
+.widget-type-icon{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  border:1px solid rgba(16,62,67,.12);
+  background:#f4f8f8;
+  color:#2f6e73;
+  box-shadow:0 6px 18px rgba(16,62,67,.055),inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.widget-type-icon svg{
+  width:23px;
+  height:23px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.widget-type-icon--planning{
+  background:linear-gradient(145deg,#f1f8ed,#e9f4e4);
+  border-color:rgba(93,143,79,.2);
+  color:#5b8f4f;
+}
+
+.widget-type-icon--attention{
+  background:linear-gradient(145deg,#eef8ec,#e5f2e1);
+  border-color:rgba(91,143,78,.2);
+  color:#5c914f;
+}
+
+.widget-type-icon--activity{
+  background:linear-gradient(145deg,#eff7f6,#e8f1f1);
+  border-color:rgba(47,110,115,.18);
+  color:#2f6e73;
+}
+
+.widget-type-icon--finance{
+  background:linear-gradient(145deg,#fff7ef,#ffecda);
+  border-color:rgba(201,122,42,.2);
+  color:#c5792c;
+}
+
+.widget-type-icon--school{
+  background:linear-gradient(145deg,#f1f7f7,#eaf2f2);
+  border-color:rgba(47,110,115,.17);
+  color:#356f73;
+}
+
+.widget-type-icon--quick{
+  background:linear-gradient(145deg,#f4f7f7,#edf3f3);
+  border-color:rgba(88,117,121,.16);
+  color:#587579;
+}
+
+.widget-type-icon-count{
+  position:absolute;
+  top:-7px;
+  right:-7px;
+  min-width:21px;
+  height:21px;
+  padding:0 5px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e58a37;
+  color:#fff;
+  border:2px solid #fff;
+  font-size:.64rem;
+  line-height:1;
+  font-weight:900;
+  box-shadow:0 3px 8px rgba(201,111,32,.18);
+}
+
+.widget-heading{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+
+.widget-quick>div:first-child{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+
+/* Legacy text/state markers are replaced by the visual system. */
+.widget-next .status-chip,
+.widget-attention .attention-count{
+  display:none!important;
+}
+
+@media(max-width:650px){
+  .widget-type-icon{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+  }
+  .widget-type-icon svg{
+    width:21px;
+    height:21px;
+  }
+  .widget-type-icon-count{
+    top:-6px;
+    right:-6px;
+    min-width:19px;
+    height:19px;
+    font-size:.6rem;
+  }
+  .widget-heading,
+  .widget-quick>div:first-child{
+    gap:.75rem;
+  }
+}
