@@ -60,7 +60,7 @@ export default function PayrollAttentionWidget({entries,payments,payslips}:{entr
   {premium&&<div className="payroll-top-mini-status"><div><span>À rapprocher</span><strong>{euro(summary.total)}</strong></div><div><span>Mois concernés</span><strong>{summary.months}</strong></div>{latest&&<small>Dernier bulletin : {new Date(latest.created_at).toLocaleDateString('fr-FR')}</small>}</div>}
   <div className="payroll-top-footer payroll-top-footer-compact">
    <span>{premium?'Accédez directement au contrôle complet de votre paie.':'Découvrez le parcours attendu → versé → écart → régularisation.'}</span>
-   <Link className="btn btn-premium" href="/dashboard/paie">Ouvrir Paie <span aria-hidden="true">★</span></Link>
+   <Link className="btn btn-primary payroll-hub-link" href="/dashboard/paie">Ouvrir Paie <span aria-hidden="true">★</span></Link>
   </div>
  </section>,mount)
 }
