@@ -28,7 +28,7 @@ export default function IssrFreeExportGuard(){
           note=document.createElement('button')
           note.type='button'
           note.className='issr-export-lock-note premium-trigger'
-          note.innerHTML='<span class="premium-badge">PREMIUM</span><span><strong>Exporter mes journées</strong><small>Excel et PDF disponibles avec l’abonnement.</small></span>'
+          note.innerHTML='<span class="premium-badge">PRO</span><span><strong>Exporter mes journées</strong><small>Excel et PDF sont disponibles avec Pro.</small></span>'
           tools.appendChild(note)
         }
       }else if(note){
