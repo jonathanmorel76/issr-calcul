@@ -1,7 +1,7 @@
 'use client'
 
 import PaymentsView from '@/components/payments-view'
-import PremiumFeatureJourney from '@/components/premium-feature-feature-journey'
+import PremiumFeatureJourney from '@/components/premium-feature-journey'
 import useBetaProductMode from '@/components/use-beta-product-mode'
 
 export default function PaymentsAccessView({userId}:{userId:string}){
