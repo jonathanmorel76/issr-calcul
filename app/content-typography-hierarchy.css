@@ -1,0 +1,77 @@
+/* Final content hierarchy: keep body copy clearly smaller than section titles. */
+.dashboard-panel p,
+.report-panel p,
+.document-upload p,
+.document-list-section p,
+.premium-highlight-card > p,
+.beta-operational-insights.free .beta-operational-lock p,
+.beta-operational-note,
+.mobile-premium-context p,
+.beta-payment-note,
+.beta-reconciliation-note,
+.indemnity-info p,
+.indemnity-manual p {
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.premium-highlight-card > strong,
+.beta-operational-insights.free .beta-operational-lock > strong,
+.premium-step strong,
+.mr-list article strong,
+.document-meta strong {
+  font-size: .94rem;
+}
+
+@media (max-width: 650px) {
+  .dashboard-panel h2,
+  .report-panel h2,
+  .document-list-head h2,
+  .indemnity-list h2,
+  .premium-journey-head h2,
+  .beta-operational-head h2,
+  .quick-access-head h2 {
+    font-size: 1rem !important;
+    line-height: 1.25;
+  }
+
+  .dashboard-panel h3,
+  .report-panel h3,
+  .document-groups h3,
+  .premium-highlight-card > strong,
+  .beta-operational-insights.free .beta-operational-lock > strong,
+  .premium-step strong,
+  .mr-list article strong,
+  .document-meta strong {
+    font-size: .86rem !important;
+    line-height: 1.32;
+  }
+
+  .dashboard-panel p,
+  .report-panel p,
+  .document-upload p,
+  .document-list-section p,
+  .premium-highlight-card > p,
+  .beta-operational-insights.free .beta-operational-lock p,
+  .beta-operational-note,
+  .mobile-premium-context p,
+  .beta-payment-note,
+  .beta-reconciliation-note,
+  .indemnity-info p,
+  .indemnity-manual p,
+  .premium-step small,
+  .mr-list article span,
+  .document-meta span {
+    font-size: .78rem !important;
+    line-height: 1.45;
+  }
+
+  .mr-list article small,
+  .document-meta small,
+  .planner-source,
+  .report-months small,
+  .report-ranking small {
+    font-size: .66rem !important;
+    line-height: 1.4;
+  }
+}
