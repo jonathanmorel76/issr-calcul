@@ -1,10 +1,32 @@
 /* Dashboard widget type markers — visual language aligned with the mobile dock. */
-.widget-heading,
-.widget-quick>div:first-child{
+.widget-grid{
+  overflow:visible;
+  padding-top:18px;
+  row-gap:28px;
+}
+
+.widget-grid>.dashboard-widget{
   position:relative;
+  overflow:visible;
+  min-width:0;
+}
+
+.widget-heading,
+.widget-quick>div:first-child,
+.widget-quick .quick-access-head{
+  padding-right:28px;
+}
+
+/* The quick-access configurator hides legacy children, but keeps this marker. */
+.quick-panel[data-quick-configured="1"]>.widget-type-icon{
+  display:inline-flex!important;
 }
 
 .widget-type-icon{
+  position:absolute;
+  top:-12px;
+  right:-6px;
+  z-index:1;
   width:46px;
   height:46px;
   border-radius:16px;
@@ -15,7 +37,7 @@
   border:1px solid rgba(16,62,67,.12);
   background:#f4f8f8;
   color:#2f6e73;
-  box-shadow:0 6px 18px rgba(16,62,67,.055),inset 0 1px 0 rgba(255,255,255,.9);
+  box-shadow:0 8px 20px rgba(16,62,67,.12),inset 0 1px 0 rgba(255,255,255,.9);
 }
 
 .widget-type-icon svg{
@@ -67,7 +89,7 @@
 .widget-type-icon-count{
   position:absolute;
   top:-7px;
-  right:-7px;
+  right:2px;
   min-width:21px;
   height:21px;
   padding:0 5px;
@@ -106,6 +128,8 @@
 
 @media(max-width:650px){
   .widget-type-icon{
+    top:-10px;
+    right:-3px;
     width:42px;
     height:42px;
     border-radius:14px;
@@ -116,7 +140,7 @@
   }
   .widget-type-icon-count{
     top:-6px;
-    right:-6px;
+    right:2px;
     min-width:19px;
     height:19px;
     font-size:.6rem;

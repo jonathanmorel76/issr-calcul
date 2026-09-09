@@ -40,16 +40,17 @@ function installVisual(config:WidgetVisual){
       const legacy=heading.querySelector<HTMLElement>(config.replaceSelector)
       if(legacy){
         if(config.preserveCount&&/^\d+$/.test((legacy.textContent||'').trim()))count=(legacy.textContent||'').trim()
-        legacy.remove()
+        // Keep React's source node mounted; CSS hides it while its count stays live.
       }
     }
 
-    const existing=heading.querySelector<HTMLElement>('.widget-type-icon')
+    const existing=widget.querySelector<HTMLElement>('.widget-type-icon')
     if(existing){
+      if(existing.parentElement!==widget)widget.appendChild(existing)
       if(config.preserveCount){
         const badge=existing.querySelector<HTMLElement>('.widget-type-icon-count')
         if(count){
-          if(badge)badge.textContent=count
+          if(badge){if(badge.textContent!==count)badge.textContent=count}
           else existing.insertAdjacentHTML('beforeend',`<span class="widget-type-icon-count">${count}</span>`)
         }else badge?.remove()
       }
@@ -62,7 +63,7 @@ function installVisual(config:WidgetVisual){
     marker.setAttribute('aria-label',config.label)
     marker.title=config.label
     marker.innerHTML=`${config.icon}${count?`<span class="widget-type-icon-count">${count}</span>`:''}`
-    heading.appendChild(marker)
+    widget.appendChild(marker)
   })
 }
 
@@ -77,7 +78,7 @@ export default function DashboardWidgetVisuals(){
     }
     schedule()
     const observer=new MutationObserver(schedule)
-    observer.observe(document.body,{childList:true,subtree:true})
+    observer.observe(document.body,{childList:true,subtree:true,characterData:true})
     window.addEventListener('popstate',schedule)
     return()=>{
       cancelAnimationFrame(frame)
