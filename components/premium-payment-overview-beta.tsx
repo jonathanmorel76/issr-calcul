@@ -21,7 +21,7 @@ export default function PremiumPaymentOverviewBeta(){
  const [scope,setScope]=useState<'dashboard'|'reports'|null>(null)
  const [version,setVersion]=useState(0)
 
- useEffect(()=>{let live=true;(async()=>{const {data}=await supabase.from('issr_entries').select('travel_date,total_amount').order('travel_date');if(live)setEntries((data??[]) as Entry[])})();return()=>{live=false}},[supabase])
+ useEffect(()=>{if(mode==='free'){setEntries([]);return}let live=true;(async()=>{const {data}=await supabase.from('issr_entries').select('travel_date,total_amount').order('travel_date');if(live)setEntries((data??[]) as Entry[])})();return()=>{live=false}},[mode,supabase])
  useEffect(()=>{
   const onStorage=(event:StorageEvent)=>{if(event.key?.startsWith('mr-beta-paid-'))setVersion(v=>v+1)}
   const onFocus=()=>setVersion(v=>v+1)
@@ -33,6 +33,7 @@ export default function PremiumPaymentOverviewBeta(){
   const sync=()=>{
    scheduled=false
    document.querySelectorAll('#beta-payment-overview').forEach((node,i)=>{if(i>0)node.remove()})
+   if(mode==='free'){setScope(null);setMount(null);document.querySelector('#beta-payment-overview')?.remove();return}
    if(pathname.includes('/bilans')){
     const main=document.querySelector('.reports-page') as HTMLElement|null
     const anchor=main?.querySelector('.report-kpis') as HTMLElement|null
@@ -48,7 +49,7 @@ export default function PremiumPaymentOverviewBeta(){
   const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(sync)}
   schedule();const observer=new MutationObserver(schedule);observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']})
   return()=>{observer.disconnect();document.querySelector('#beta-payment-overview')?.remove()}
- },[pathname])
+ },[mode,pathname])
 
  const rows=useMemo(()=>{
   void version
@@ -67,15 +68,13 @@ export default function PremiumPaymentOverviewBeta(){
  const cumulativeGap=missingOnly.reduce((sum,r)=>sum+Math.abs(r.difference??0),0)
  const paidTotal=filled.reduce((sum,r)=>sum+(r.paid??0),0),expectedTotal=filled.reduce((sum,r)=>sum+r.expected,0)
  const recentIssues=issues.slice(0,3)
- const openPremium=()=>window.dispatchEvent(new Event('mr-open-premium'))
-
- if(!mount||!scope)return null
+ if(mode==='free'||!mount||!scope)return null
  return createPortal(<section className={`beta-payment-overview ${mode} ${scope}`} aria-label="Synthèse Pro des versements ISSR">
   <div className="beta-payment-overview-head"><div><span className="eyebrow">Suivi</span><h2>{scope==='dashboard'?'Mes versements à surveiller':'Attendu / versé sur la période'}</h2></div><span className="beta-premium-badge">PRO</span></div>
-  {mode==='free'?<div className="beta-payment-overview-lock"><div><strong>{rows.length?`${rows.length} mois peuvent être contrôlés`:'Vérifiez vos versements'}</strong><p>Comparez les montants attendus et reçus.</p></div><button type="button" onClick={openPremium}>Découvrir</button></div>:<>
+  <>
    <div className="beta-payment-kpis"><article><span>Mois renseignés</span><strong>{filled.length}</strong></article><article className={issues.length?'attention':'ok'}><span>Mois à vérifier</span><strong>{issues.length}</strong></article><article className={cumulativeGap>0?'attention':'ok'}><span>Écart manquant cumulé</span><strong>{euro(cumulativeGap)}</strong></article>{scope==='reports'&&<article><span>Attendu / versé</span><strong>{euro(expectedTotal)} / {euro(paidTotal)}</strong></article>}</div>
    {recentIssues.length?<div className="beta-payment-issues">{recentIssues.map(row=><article key={row.month}><div><strong>{monthLabel(row.month)}</strong><small>Attendu {euro(row.expected)} · versé {euro(row.paid??0)}</small></div><span className={row.state}>{row.difference!>0?'+':''}{euro(row.difference??0)}</span></article>)}</div>:<div className="beta-payment-clear"><strong>{filled.length?'Aucun écart à vérifier':'Aucun versement renseigné'}</strong><p>{filled.length?'Les mois renseignés correspondent aux estimations enregistrées.':'Renseignez les montants reçus dans Mes indemnités pour alimenter ce suivi.'}</p></div>}
    <p className="beta-payment-note">Indicateur d’aide à la vérification : les décalages de paie et rattrapages peuvent expliquer certains écarts.</p>
-  </>}
+  </>
  </section>,mount)
 }

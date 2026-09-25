@@ -11,6 +11,7 @@ const PREMIUM_SELECTORS=[
  '.beta-payment-overview.free .beta-payment-overview-lock',
  '.beta-operational-insights.free .beta-operational-lock',
 ].join(',')
+const PRO_ROUTE_SELECTOR='a[href="/dashboard/paie"],a[href="/dashboard/versements"],a[href="/dashboard/bilans"],a[href^="/dashboard/regularisation"]'
 
 function openSubscriptionMenu(){
  const trigger=document.querySelector<HTMLButtonElement>('.beta-mode-pill')
@@ -24,6 +25,13 @@ export default function PremiumSubscriptionRouter(){
   const onClick=(event:MouseEvent)=>{
    const target=event.target as HTMLElement|null
    if(!target)return
+   const proRoute=target.closest<HTMLAnchorElement>(PRO_ROUTE_SELECTOR)
+   if(proRoute&&document.documentElement.dataset.productMode!=='premium'){
+    event.preventDefault()
+    event.stopPropagation()
+    openSubscriptionMenu()
+    return
+   }
    const premiumTarget=target.closest<HTMLElement>(PREMIUM_SELECTORS)
    if(!premiumTarget)return
    const tag=premiumTarget.matches('.tag')

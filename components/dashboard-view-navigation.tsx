@@ -3,17 +3,14 @@
 import { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
-const VIEW_LABELS:Record<string,string>={dashboard:'Tableau de bord',establishments:'Mes établissements',missions:'Mes missions',indemnities:'Mes indemnités'}
-
 export default function DashboardViewNavigation(){
  const pathname=usePathname()
  const router=useRouter()
  useEffect(()=>{
   if(pathname!=='/dashboard')return
-  let queryApplied=false
   let scheduled=false
 
-  router.prefetch('/dashboard/versements')
+  router.prefetch('/dashboard/paie')
   router.prefetch('/dashboard/bilans')
   router.prefetch('/dashboard/documents')
 
@@ -48,22 +45,10 @@ export default function DashboardViewNavigation(){
    const nav=document.querySelector<HTMLElement>('.product-tabs')
    if(!nav)return
 
-   ensureRouteTab(nav,'Mes versements','/dashboard/versements','Mes bilans')
+   ensureRouteTab(nav,'Paie','/dashboard/paie','Mes bilans')
    ensureRouteTab(nav,'Mes bilans','/dashboard/bilans','Mes documents')
    ensureRouteTab(nav,'Mes documents','/dashboard/documents')
 
-   if(!queryApplied){
-    const wanted=new URLSearchParams(window.location.search).get('view')
-    const label=wanted?VIEW_LABELS[wanted]:null
-    if(label){
-     const target=Array.from(nav.querySelectorAll<HTMLButtonElement>('button')).find(button=>button.textContent?.trim()===label)
-     if(target){
-      queryApplied=true
-      target.click()
-      window.history.replaceState({},'',window.location.pathname)
-     }
-    }
-   }
   }
 
   function scheduleSetup(){

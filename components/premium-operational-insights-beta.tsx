@@ -29,7 +29,7 @@ export default function PremiumOperationalInsightsBeta(){
  const [loading,setLoading]=useState(false)
 
  useEffect(()=>{
-  if(pathname!=='/dashboard'){setScope(null);setMount(null);return}
+  if(pathname!=='/dashboard'||mode==='free'){setScope(null);setMount(null);document.querySelector('#beta-operational-insights')?.remove();return}
   let scheduled=false
   const sync=()=>{
    scheduled=false
@@ -50,10 +50,10 @@ export default function PremiumOperationalInsightsBeta(){
   const observer=new MutationObserver(schedule)
   observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']})
   return()=>{observer.disconnect();document.querySelector('#beta-operational-insights')?.remove()}
- },[pathname])
+ },[mode,pathname])
 
  useEffect(()=>{
-  if(!scope)return
+  if(!scope||mode==='free')return
   let live=true
   setLoading(true)
   ;(async()=>{
@@ -69,7 +69,7 @@ export default function PremiumOperationalInsightsBeta(){
    setLoading(false)
   })()
   return()=>{live=false}
- },[scope,supabase])
+ },[mode,scope,supabase])
 
  const estStats=useMemo<EstStat[]>(()=>{
   const missionToEst=new Map<string,string>()
@@ -104,12 +104,10 @@ export default function PremiumOperationalInsightsBeta(){
  const incompleteCount=missionIssues.filter(i=>i.id!=='overlaps').length
  const missingDistances=establishments.filter(e=>e.usual_distance_km==null).length
  const totalTrackedDays=estStats.reduce((s,e)=>s+e.days,0)
- const openPremium=()=>window.dispatchEvent(new Event('mr-open-premium'))
-
- if(!mount||!scope)return null
+ if(mode==='free'||!mount||!scope)return null
  return createPortal(<section className={`beta-operational-insights ${scope} ${mode}`} aria-label={scope==='establishments'?'Analyse des établissements':'Contrôles des missions'}>
   <div className="beta-operational-head"><div><span className="eyebrow">Suivi</span><h2>{scope==='establishments'?'Analyse par établissement':'Contrôles de cohérence'}</h2></div><span className="beta-premium-badge">PRO</span></div>
-  {loading?<div className="beta-operational-loading">Analyse en cours…</div>:mode==='free'?<div className="beta-operational-lock"><div><strong>{scope==='establishments'?'Reliez vos indemnités à chaque école':'Contrôlez vos missions'}</strong><p>{scope==='establishments'?'Jours, kilomètres et montants au même endroit.':'Chevauchements et informations manquantes repérés.'}</p></div><button type="button" onClick={openPremium}>Découvrir</button></div>:scope==='establishments'?<>
+  {loading?<div className="beta-operational-loading">Analyse en cours…</div>:scope==='establishments'?<>
    <div className="beta-operational-kpis"><article><span>Établissements</span><strong>{establishments.length}</strong></article><article className={missingDistances?'attention':'ok'}><span>Distances à compléter</span><strong>{missingDistances}</strong></article><article><span>Jours suivis</span><strong>{totalTrackedDays}</strong></article></div>
    {estStats.length?<div className="beta-est-ranking">{estStats.map((est,index)=><article key={est.id}><b>{index+1}</b><div><strong>{est.name}</strong><small>{est.missions} mission(s) · {est.days} jour(s) · {est.km.toLocaleString('fr-FR',{maximumFractionDigits:1})} km</small></div><span>{euro(est.total)}</span></article>)}</div>:<div className="beta-operational-clear"><strong>Aucune donnée à analyser</strong><p>Les statistiques apparaîtront dès que des missions et journées seront rattachées à vos établissements.</p></div>}
   </>:<>

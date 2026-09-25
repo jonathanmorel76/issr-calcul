@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { NAV_ICONS } from './navigation-icons'
+import useBetaProductMode from '@/components/use-beta-product-mode'
 
 type QuickKey='establishments'|'missions'|'indemnities'|'payroll'|'reports'|'documents'
 type QuickItem={key:QuickKey;label:string;short:string;description:string;icon:React.ReactNode;href?:string;view?:string;top?:boolean}
@@ -25,6 +26,7 @@ function validKeys(value:unknown):QuickKey[]|null{
 }
 
 export default function QuickAccessConfigurator(){
+ const premium=useBetaProductMode()==='premium'
  const [mount,setMount]=useState<HTMLElement|null>(null)
  const [selected,setSelected]=useState<QuickKey[]>(DEFAULT_KEYS)
  const [draft,setDraft]=useState<QuickKey[]>(DEFAULT_KEYS)
@@ -38,7 +40,7 @@ export default function QuickAccessConfigurator(){
   schedule();const observer=new MutationObserver(schedule);observer.observe(document.body,{subtree:true,childList:true});return()=>{observer.disconnect();document.querySelectorAll('.quick-panel[data-quick-configured="1"]').forEach(panel=>{delete (panel as HTMLElement).dataset.quickConfigured;panel.querySelector(':scope > .quick-access-config-host')?.remove()})}
  },[])
  const shown=useMemo(()=>selected.map(key=>ITEMS.find(item=>item.key===key)!).filter(Boolean),[selected])
- function navigate(item:QuickItem){const dock=document.querySelector<HTMLButtonElement>(`.mobile-app-dock [data-nav-key="${item.key}"]`);if(dock){dock.click();return}if(item.href){window.location.assign(item.href);return}const button=Array.from(document.querySelectorAll<HTMLButtonElement>('.product-tabs button')).find(x=>x.textContent?.trim()===item.label);if(button){button.click();window.scrollTo({top:0,left:0,behavior:'auto'});return}window.location.assign(`/dashboard?view=${item.view}`)}
+ function navigate(item:QuickItem){if(!premium&&(item.key==='payroll'||item.key==='reports')){window.dispatchEvent(new Event('mr-open-premium'));return}const dock=document.querySelector<HTMLButtonElement>(`.mobile-app-dock [data-nav-key="${item.key}"]`);if(dock){dock.click();return}if(item.href){window.location.assign(item.href);return}const button=Array.from(document.querySelectorAll<HTMLButtonElement>('.product-tabs button')).find(x=>x.textContent?.trim()===item.label);if(button){button.click();window.scrollTo({top:0,left:0,behavior:'auto'});return}window.location.assign(`/dashboard?view=${item.view}`)}
  function toggle(key:QuickKey){setDraft(current=>current.includes(key)?current.filter(x=>x!==key):current.length<3?[...current,key]:current)}
  function openFilter(){setDraft(selected);setOpen(true)}
  function save(){if(draft.length!==3)return;setSelected(draft);try{window.localStorage.setItem(STORAGE_KEY,JSON.stringify(draft))}catch{}setOpen(false)}

@@ -17,6 +17,7 @@ export default function PayrollAttentionWidget({entries,payments,payslips}:{entr
  const [mount,setMount]=useState<HTMLElement|null>(null)
  const [scope,setScope]=useState<Scope|null>(null)
  useEffect(()=>{
+  if(!premium){document.querySelector('#payroll-top-feature-host')?.remove();setMount(null);setScope(null);return}
   let scheduled=false
   const sync=()=>{
    scheduled=false
@@ -58,7 +59,7 @@ export default function PayrollAttentionWidget({entries,payments,payslips}:{entr
   window.addEventListener('popstate',schedule)
   window.addEventListener('mr-dashboard-view',schedule as EventListener)
   return()=>{observer.disconnect();window.removeEventListener('popstate',schedule);window.removeEventListener('mr-dashboard-view',schedule as EventListener);document.querySelector('#payroll-top-feature-host')?.remove()}
- },[])
+ },[premium])
  const summary=useMemo(()=>{
   const expected=new Map<string,number>(),received=new Map<string,number>()
   for(const entry of entries){const month=entry.travel_date.slice(0,7);expected.set(month,(expected.get(month)??0)+Number(entry.total_amount||0))}
@@ -67,7 +68,7 @@ export default function PayrollAttentionWidget({entries,payments,payslips}:{entr
   for(const [month,amount] of expected){const gap=Math.max(0,amount-(received.get(month)??0));if(gap>.01){months++;total+=gap}}
   return {months,total}
  },[entries,payments])
- if(!scope||!mount)return null
+ if(!premium||!scope||!mount)return null
  const latest=payslips[0]
  const contextualCopy=scope==='indemnities'
   ?'Vous savez ce qui devrait vous être versé. Paie ★ vous aide ensuite à vérifier ce qui a réellement été retrouvé sur vos bulletins.'

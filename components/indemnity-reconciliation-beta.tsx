@@ -23,7 +23,7 @@ export default function IndemnityReconciliationBeta(){
  const visible=pathname==='/dashboard'
 
  useEffect(()=>{
-  if(!visible)return
+  if(!visible||mode==='free'){document.querySelector('#beta-indemnity-reconciliation')?.remove();setMount(null);return}
   let observer:MutationObserver|undefined
   let monthInput:HTMLInputElement|null=null
   let onMonth:(()=>void)|null=null
@@ -64,7 +64,7 @@ export default function IndemnityReconciliationBeta(){
    if(monthInput&&onMonth)monthInput.removeEventListener('change',onMonth)
    document.querySelector('#beta-indemnity-reconciliation')?.remove()
   }
- },[pathname,visible])
+ },[mode,pathname,visible])
 
  useEffect(()=>{
   try{setPaidInput(window.localStorage.getItem(`mr-beta-paid-${month}`)??'')}catch{setPaidInput('')}
@@ -85,18 +85,13 @@ export default function IndemnityReconciliationBeta(){
    else window.localStorage.removeItem(`mr-beta-paid-${month}`)
   }catch{}
  }
- const openPremium=()=>window.dispatchEvent(new Event('mr-open-premium'))
-
- if(!visible||!mount)return null
+ if(mode==='free'||!visible||!mount)return null
  return createPortal(<section className={`beta-reconciliation ${mode}`} aria-label="Rapprochement ISSR attendu et versé">
   <div className="beta-reconciliation-head">
    <div><span className="eyebrow">Suivi Premium</span><h2>Attendu / versé</h2><p>Comparez l’estimation calculée par Mon Remplacement au montant réellement reçu pour le mois.</p></div>
    <span className="beta-premium-badge">PREMIUM</span>
   </div>
-  {mode==='free'?<div className="beta-reconciliation-lock">
-   <div><strong>Ce mois-ci : {euro(estimated)} attendus</strong><p>Comparez cette estimation au montant versé.</p></div>
-   <button type="button" onClick={openPremium}>Vérifier</button>
-  </div>:<>
+  <>
    <div className="beta-reconciliation-grid">
     <article><span>Montant attendu</span><strong>{euro(estimated)}</strong><small>calcul ISSR + primes</small></article>
     <article><span>Montant versé</span><label><input inputMode="decimal" value={paidInput} onChange={e=>save(e.target.value)} placeholder="0,00" aria-label="Montant réellement versé"/><b>€</b></label><small>saisie manuelle pour cette Beta</small></article>
@@ -107,6 +102,6 @@ export default function IndemnityReconciliationBeta(){
     <div><strong>{state==='ok'?'Aucun écart détecté':state==='missing'?'Versement à vérifier':state==='over'?'Écart positif à vérifier':'Versement non renseigné'}</strong><p>{state==='missing'?`Il manque ${euro(Math.abs(difference??0))} par rapport à l’estimation. Vérifiez votre bulletin ou le décalage éventuel de paiement.`:state==='over'?`Le versement dépasse l’estimation de ${euro(Math.abs(difference??0))}. Cela peut provenir d’un rattrapage ou d’un autre élément de paie.`:state==='ok'?'Le montant saisi correspond à l’estimation du mois.':'Saisissez le montant ISSR réellement reçu pour obtenir une comparaison.'}</p></div>
    </div>
    <p className="beta-reconciliation-note">Aide à la vérification uniquement : un écart n’établit pas à lui seul une erreur de paie. Les versements peuvent être décalés dans le temps.</p>
-  </>}
+  </>
  </section>,mount)
 }

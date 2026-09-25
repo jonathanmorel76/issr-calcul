@@ -17,23 +17,12 @@ export default function IssrFreeExportGuard(){
       const isFree=mode!=='premium'
 
       exportButtons.forEach(button=>{
-        button.disabled=isFree
+        button.disabled=false
         button.setAttribute('aria-disabled',String(isFree))
         button.dataset.issrExportLocked=isFree?'1':'0'
       })
 
-      let note=tools.querySelector<HTMLButtonElement>('.issr-export-lock-note')
-      if(isFree){
-        if(!note){
-          note=document.createElement('button')
-          note.type='button'
-          note.className='issr-export-lock-note premium-trigger'
-          note.innerHTML='<span class="premium-badge">PRO</span><span><strong>Exporter mes journées</strong><small>Excel et PDF sont disponibles avec le mode Pro.</small></span>'
-          tools.appendChild(note)
-        }
-      }else if(note){
-        note.remove()
-      }
+      tools.querySelector('.issr-export-lock-note')?.remove()
     }
 
     sync()
@@ -54,6 +43,7 @@ export default function IssrFreeExportGuard(){
       if(!button)return
       event.preventDefault()
       event.stopPropagation()
+      window.dispatchEvent(new Event('mr-open-premium'))
     }
     document.addEventListener('click',onCapture,true)
     return()=>document.removeEventListener('click',onCapture,true)

@@ -58,6 +58,11 @@ export default function MobilePremiumPreview(){
   window.addEventListener('mr-open-premium',show)
  return()=>window.removeEventListener('mr-open-premium',show)
  },[])
+ useEffect(()=>{
+  if(!visible||new URLSearchParams(window.location.search).get('offer')!=='pro')return
+  setOpen(true)
+  window.history.replaceState({},'',window.location.pathname)
+ },[pathname,visible])
 
  const copy=useMemo(()=>COPY[view],[view])
  if(!visible)return null
@@ -65,7 +70,7 @@ export default function MobilePremiumPreview(){
  const activate=()=>{setMode('premium');setOpen(false)}
 
  return <>
-  <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label="Ouvrir mon offre"><span className="beta-mode-dot"/><span>{premiumActive?'Pro':'Essentiel'}</span></button>
+  <button type="button" className={`beta-mode-pill ${mode}`} onClick={()=>setOpen(true)} aria-label={premiumActive?'Gérer le mode Pro':'Consulter l’offre Pro'}><span className="beta-mode-dot"/><span>{premiumActive?'Pro actif':'Essentiel'}</span></button>
   {open&&<div className="beta-mode-backdrop" role="dialog" aria-modal="true" aria-label="Mon Remplacement Pro" onClick={()=>setOpen(false)}>
    <section className="beta-mode-sheet" onClick={e=>e.stopPropagation()}>
     <div className="beta-mode-sheet-handle"/>
