@@ -85,6 +85,7 @@ export default function IndemnityReconciliationBeta(){
    else window.localStorage.removeItem(`mr-beta-paid-${month}`)
   }catch{}
  }
+ const openPremium=()=>window.dispatchEvent(new Event('mr-open-premium'))
 
  if(!visible||!mount)return null
  return createPortal(<section className={`beta-reconciliation ${mode}`} aria-label="Rapprochement ISSR attendu et versé">
@@ -93,8 +94,8 @@ export default function IndemnityReconciliationBeta(){
    <span className="beta-premium-badge">PREMIUM</span>
   </div>
   {mode==='free'?<div className="beta-reconciliation-lock">
-   <div className="beta-lock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v9H6z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></div>
-   <div><strong>Vérifiez vos versements automatiquement</strong><p>Premium permet de saisir le montant réellement reçu, de mesurer l’écart et de repérer les mois à vérifier.</p></div>
+   <div><strong>Ce mois-ci : {euro(estimated)} attendus</strong><p>Comparez cette estimation au montant versé.</p></div>
+   <button type="button" onClick={openPremium}>Vérifier</button>
   </div>:<>
    <div className="beta-reconciliation-grid">
     <article><span>Montant attendu</span><strong>{euro(estimated)}</strong><small>calcul ISSR + primes</small></article>

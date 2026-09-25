@@ -8,3 +8,4 @@
  .beta-payment-clear{margin-top:.65rem;padding:.8rem;border-radius:14px;background:#fff;border:1px solid rgba(105,167,91,.18)}.beta-payment-clear strong{display:block;color:var(--color-brand-800);font-size:.8rem}.beta-payment-clear p{margin:.25rem 0 0;color:var(--text-secondary);font-size:.7rem;line-height:1.4}
  .beta-payment-note{margin:.65rem 0 0;color:var(--text-secondary);font-size:.62rem;line-height:1.4}
 }
+@media(min-width:651px){.beta-payment-overview{display:none!important}}

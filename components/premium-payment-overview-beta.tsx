@@ -67,11 +67,12 @@ export default function PremiumPaymentOverviewBeta(){
  const cumulativeGap=missingOnly.reduce((sum,r)=>sum+Math.abs(r.difference??0),0)
  const paidTotal=filled.reduce((sum,r)=>sum+(r.paid??0),0),expectedTotal=filled.reduce((sum,r)=>sum+r.expected,0)
  const recentIssues=issues.slice(0,3)
+ const openPremium=()=>window.dispatchEvent(new Event('mr-open-premium'))
 
  if(!mount||!scope)return null
  return createPortal(<section className={`beta-payment-overview ${mode} ${scope}`} aria-label="Synthèse Pro des versements ISSR">
   <div className="beta-payment-overview-head"><div><span className="eyebrow">Suivi</span><h2>{scope==='dashboard'?'Mes versements à surveiller':'Attendu / versé sur la période'}</h2></div><span className="beta-premium-badge">PRO</span></div>
-  {mode==='free'?<div className="beta-payment-overview-lock"><strong>Repérez les mois à vérifier sans ouvrir chaque détail</strong><p>Consolidez les montants attendus et versés, puis repérez les écarts qui méritent une vérification.</p></div>:<>
+  {mode==='free'?<div className="beta-payment-overview-lock"><div><strong>{rows.length?`${rows.length} mois peuvent être contrôlés`:'Vérifiez vos versements'}</strong><p>Comparez les montants attendus et reçus.</p></div><button type="button" onClick={openPremium}>Découvrir</button></div>:<>
    <div className="beta-payment-kpis"><article><span>Mois renseignés</span><strong>{filled.length}</strong></article><article className={issues.length?'attention':'ok'}><span>Mois à vérifier</span><strong>{issues.length}</strong></article><article className={cumulativeGap>0?'attention':'ok'}><span>Écart manquant cumulé</span><strong>{euro(cumulativeGap)}</strong></article>{scope==='reports'&&<article><span>Attendu / versé</span><strong>{euro(expectedTotal)} / {euro(paidTotal)}</strong></article>}</div>
    {recentIssues.length?<div className="beta-payment-issues">{recentIssues.map(row=><article key={row.month}><div><strong>{monthLabel(row.month)}</strong><small>Attendu {euro(row.expected)} · versé {euro(row.paid??0)}</small></div><span className={row.state}>{row.difference!>0?'+':''}{euro(row.difference??0)}</span></article>)}</div>:<div className="beta-payment-clear"><strong>{filled.length?'Aucun écart à vérifier':'Aucun versement renseigné'}</strong><p>{filled.length?'Les mois renseignés correspondent aux estimations enregistrées.':'Renseignez les montants reçus dans Mes indemnités pour alimenter ce suivi.'}</p></div>}
    <p className="beta-payment-note">Indicateur d’aide à la vérification : les décalages de paie et rattrapages peuvent expliquer certains écarts.</p>

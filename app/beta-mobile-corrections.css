@@ -286,3 +286,144 @@
   .document-file-picker { min-height: 62px; }
   .report-loading-skeleton { min-height: 420px; }
 }
+
+@media (max-width: 650px) {
+  /* Une seule invitation Premium, courte et actionnable, par contexte. */
+  .beta-payment-overview.free,
+  .beta-operational-insights.free,
+  .beta-reconciliation.free {
+    padding: .72rem .78rem !important;
+    border: 1px solid rgba(16, 62, 67, .09) !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .beta-payment-overview.free .beta-payment-overview-head,
+  .beta-operational-insights.free .beta-operational-head,
+  .beta-reconciliation.free .beta-reconciliation-head {
+    display: none;
+  }
+
+  .beta-payment-overview-lock,
+  .beta-operational-lock,
+  .beta-reconciliation-lock {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: .75rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
+
+  .beta-payment-overview-lock > div,
+  .beta-operational-lock > div,
+  .beta-reconciliation-lock > div {
+    min-width: 0;
+  }
+
+  .beta-payment-overview-lock strong,
+  .beta-operational-lock strong,
+  .beta-reconciliation-lock strong {
+    font-size: .8rem !important;
+    line-height: 1.3;
+  }
+
+  .beta-payment-overview-lock p,
+  .beta-operational-lock p,
+  .beta-reconciliation-lock p {
+    margin: .12rem 0 0 !important;
+    font-size: .68rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .beta-payment-overview-lock button,
+  .beta-operational-lock button,
+  .beta-reconciliation-lock button,
+  .premium-locked-panel > button {
+    flex: none;
+    min-height: 40px;
+    padding: .55rem .68rem;
+    border: 0;
+    border-radius: 11px;
+    background: var(--color-brand-800);
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 850;
+  }
+
+  .premium-locked-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    min-height: 64px;
+    padding: .72rem .78rem !important;
+    border: 1px solid rgba(16, 62, 67, .09) !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .premium-locked-panel > div {
+    display: grid;
+    gap: .12rem;
+    min-width: 0;
+  }
+
+  .premium-locked-panel > div strong {
+    color: var(--color-brand-800);
+    font-size: .8rem;
+    line-height: 1.3;
+  }
+
+  .premium-inline-lock {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: .55rem;
+    width: 100%;
+    min-height: 44px;
+    padding: .58rem .72rem;
+    border: 1px solid #dce5e2;
+    border-radius: 12px;
+    background: #f8faf9;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .premium-inline-lock::after {
+    content: '→';
+    margin-left: auto;
+    color: var(--color-brand-700);
+    font-size: 1rem;
+  }
+
+  .premium-inline-lock span {
+    color: #aa642f;
+  }
+
+  .beta-mode-sheet header > button {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+  }
+
+  .mr-form label,
+  .document-form label,
+  .account-view label {
+    font-size: .8rem;
+  }
+
+  .mr-form input:not([type="checkbox"]),
+  .mr-form select,
+  .document-form input:not([type="file"]),
+  .document-form select,
+  .account-view input:not([type="file"]),
+  .account-view select,
+  .account-view textarea,
+  .indemnities-embedded input:not([type="checkbox"]),
+  .indemnities-embedded select {
+    font-size: .9rem !important;
+  }
+}
